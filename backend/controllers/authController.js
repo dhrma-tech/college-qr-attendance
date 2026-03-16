@@ -143,7 +143,13 @@ const registerUser = async (req, res) => {
                 message: 'Database temporarily unavailable. Please try again in a few moments.' 
             });
         }
-        res.status(400).json({ message: err.message });
+        res.status(400).json({ 
+            message: err.message,
+            diagnostic: {
+                uri: process.env.MONGODB_URI ? process.env.MONGODB_URI.replace(/:([^:@]+)@/, ':***@') : 'not set',
+                name: err.name
+            }
+        });
     }
 };
 

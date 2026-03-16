@@ -129,6 +129,16 @@ app.get('/api/health', (req, res) => {
     });
 });
 
+// Debug endpoint
+app.get('/api/debug-auth', (req, res) => {
+    res.json({
+        readyState: mongoose.connection.readyState,
+        envVar: process.env.MONGODB_URI ? process.env.MONGODB_URI.replace(/:([^:@]+)@/, ':***@') : 'not set',
+        cwd: process.cwd(),
+        dirname: __dirname,
+    });
+});
+
 // Serve frontend in production
 if (process.env.NODE_ENV === 'production') {
     app.use(express.static(path.join(__dirname, '../frontend/dist')));
