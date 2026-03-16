@@ -36,8 +36,9 @@ mongoose.connection.on('connected', () => console.log('Mongoose connected to DB'
 mongoose.connection.on('error', (err) => console.error('Mongoose connection error:', err));
 mongoose.connection.on('disconnected', () => console.log('Mongoose disconnected'));
 
-// Database connection with retry logic and better configuration
+// Database connection with fallback and retry logic
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/college-attendance';
+const MONGODB_LOCAL_URI = process.env.MONGODB_LOCAL_URI || 'mongodb://localhost:27017/college-attendance';
 
 const connectDB = async () => {
   try {
@@ -52,14 +53,45 @@ const connectDB = async () => {
       w: 'majority',
       bufferMaxEntries: 0, // Disable mongoose buffering
       bufferCommands: false, // Disable mongoose buffering
+      // Add additional connection options for Atlas
+      ssl: true,
+      sslValidate: false,
+      useNewUrlParser: true,
+      useUnifiedTopology: true
     };
 
-    const conn = await mongoose.connect(MONGODB_URI, options);
-    console.log(`MongoDB Connected: ${conn.connection.host}`);
+    // Try Atlas first, then fallback to local
+    let uri = MONGODB_URI;
+    let connectionSource = 'MongoDB Atlas';
+    
+    console.log(`Attempting to connect to ${connectionSource}...`);
+    
+    try {
+      const conn = await mongoose.connect(uri, options);
+      console.log(`${connectionSource} Connected: ${conn.connection.host}`);
+    } catch (atlasError) {
+      console.error(`${connectionSource} connection failed:`, atlasError.message);
+      
+      // Fallback to local MongoDB if Atlas fails
+      if (atlasError.message && atlasError.message.includes('IP is not in the whitelist')) {
+        console.log('Falling back to local MongoDB...');
+        uri = MONGODB_LOCAL_URI;
+        connectionSource = 'Local MongoDB';
+        
+        const conn = await mongoose.connect(uri, options);
+        console.log(`${connectionSource} Connected: ${conn.connection.host}`);
+      } else {
+        throw atlasError;
+      }
+    }
     
     // Handle connection events
     mongoose.connection.on('error', (err) => {
       console.error('MongoDB connection error:', err);
+      if (err.message && err.message.includes('IP is not in the whitelist')) {
+        console.error('IP WHITELIST ERROR: Please add server IP to MongoDB Atlas whitelist');
+        console.error('Visit: https://cloud.mongodb.com/v2/4.6#/clusters/attendancesys/security/network-access');
+      }
     });
     
     mongoose.connection.on('disconnected', () => {
@@ -74,6 +106,10 @@ const connectDB = async () => {
     
   } catch (error) {
     console.error('Database connection error:', error);
+    if (error.message && error.message.includes('IP is not in the whitelist')) {
+      console.error('IP WHITELIST ERROR: Please add server IP to MongoDB Atlas whitelist');
+      console.error('Visit: https://cloud.mongodb.com/v2/4.6#/clusters/attendancesys/security/network-access');
+    }
     console.log('Retrying connection in 5 seconds...');
     // Retry connection after 5 seconds
     setTimeout(connectDB, 5000);
