@@ -1,33 +1,54 @@
 import { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { QrCode, Lock, Mail, AlertCircle, ChevronRight, UserCheck, GraduationCap, Shield, LayoutDashboard } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { UserPlus, Mail, Lock, AlertCircle, User, GraduationCap, Shield, ChevronRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
+import api from '../utils/api';
 
-const Login = () => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+const Register = () => {
+    const [formData, setFormData] = useState({
+        name: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
+        role: 'student'
+    });
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
-    const { login } = useAuth();
     const navigate = useNavigate();
-    const location = useLocation();
 
-    const from = location.state?.from?.pathname || '/dashboard';
+    const handleChange = (e) => {
+        setFormData({
+            ...formData,
+            [e.target.name]: e.target.value
+        });
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
         setError('');
+
+        if (formData.password !== formData.confirmPassword) {
+            setError('Passwords do not match');
+            setLoading(false);
+            return;
+        }
+
         try {
-            await login(email, password);
-            toast.success('Welcome back!');
-            navigate(from, { replace: true });
+            await api.post('/admin/register', {
+                name: formData.name,
+                email: formData.email,
+                password: formData.password,
+                role: formData.role
+            });
+            
+            toast.success('Account created successfully! Please login.');
+            navigate('/login');
         } catch (err) {
-            setError(err.response?.data?.message || 'Login failed. Please check your credentials.');
-            toast.error('Authentication failed');
+            setError(err.response?.data?.message || 'Registration failed. Please try again.');
+            toast.error('Registration failed');
         } finally {
             setLoading(false);
         }
@@ -53,14 +74,14 @@ const Login = () => {
                 <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
                     <div className="inline-flex items-center justify-center p-3 bg-white rounded-2xl shadow-xl border border-slate-100 mb-6">
                         <div className="bg-primary-600 p-2 rounded-xl">
-                            <QrCode className="h-8 w-8 text-white" />
+                            <UserPlus className="h-8 w-8 text-white" />
                         </div>
                     </div>
                     <h2 className="text-4xl font-black text-slate-900 tracking-tight">
-                        Gatekeeper<span className="text-primary-600">.</span>
+                        Create Account<span className="text-primary-600">.</span>
                     </h2>
                     <p className="mt-3 text-slate-500 font-medium tracking-wide uppercase text-[10px]">
-                        College QR Attendance Protocol
+                        Join College QR Attendance System
                     </p>
                 </motion.div>
             </div>
@@ -87,17 +108,51 @@ const Login = () => {
                         )}
                         
                         <div className="space-y-1.5">
+                            <label className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Full Name</label>
+                            <div className="relative group">
+                                <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-primary-500 transition-colors" />
+                                <input
+                                    type="text"
+                                    name="name"
+                                    required
+                                    value={formData.name}
+                                    onChange={handleChange}
+                                    className="block w-full pl-12 pr-4 py-4 bg-slate-50/50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all font-medium placeholder-slate-400"
+                                    placeholder="John Doe"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="space-y-1.5">
                             <label className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Institutional Email</label>
                             <div className="relative group">
                                 <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-primary-500 transition-colors" />
                                 <input
                                     type="email"
+                                    name="email"
                                     required
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
+                                    value={formData.email}
+                                    onChange={handleChange}
                                     className="block w-full pl-12 pr-4 py-4 bg-slate-50/50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all font-medium placeholder-slate-400"
                                     placeholder="your@college.edu"
                                 />
+                            </div>
+                        </div>
+
+                        <div className="space-y-1.5">
+                            <label className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Role</label>
+                            <div className="relative group">
+                                <Shield className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-primary-500 transition-colors" />
+                                <select
+                                    name="role"
+                                    value={formData.role}
+                                    onChange={handleChange}
+                                    className="block w-full pl-12 pr-4 py-4 bg-slate-50/50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all font-medium text-slate-700"
+                                >
+                                    <option value="student">Student</option>
+                                    <option value="teacher">Teacher</option>
+                                    <option value="hod">HOD</option>
+                                </select>
                             </div>
                         </div>
 
@@ -107,9 +162,26 @@ const Login = () => {
                                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-primary-500 transition-colors" />
                                 <input
                                     type="password"
+                                    name="password"
                                     required
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
+                                    value={formData.password}
+                                    onChange={handleChange}
+                                    className="block w-full pl-12 pr-4 py-4 bg-slate-50/50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all font-medium placeholder-slate-400"
+                                    placeholder="••••••••"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="space-y-1.5">
+                            <label className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Confirm Password</label>
+                            <div className="relative group">
+                                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-primary-500 transition-colors" />
+                                <input
+                                    type="password"
+                                    name="confirmPassword"
+                                    required
+                                    value={formData.confirmPassword}
+                                    onChange={handleChange}
                                     className="block w-full pl-12 pr-4 py-4 bg-slate-50/50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all font-medium placeholder-slate-400"
                                     placeholder="••••••••"
                                 />
@@ -124,7 +196,7 @@ const Login = () => {
                             className="w-full relative group overflow-hidden py-4 px-6 rounded-2xl shadow-xl shadow-primary-200/50 bg-primary-600 text-white font-bold text-sm tracking-wide transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             <span className="relative z-10 flex items-center justify-center gap-2">
-                                {loading ? 'Validating Token...' : 'Access Portal'}
+                                {loading ? 'Creating Account...' : 'Create Account'}
                                 {!loading && <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />}
                             </span>
                             <div className="absolute inset-0 bg-gradient-to-r from-primary-700 to-indigo-700 opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -132,13 +204,13 @@ const Login = () => {
 
                         <div className="text-center">
                             <p className="text-sm text-slate-500">
-                                Don't have an account?{' '}
+                                Already have an account?{' '}
                                 <button
                                     type="button"
-                                    onClick={() => navigate('/register')}
+                                    onClick={() => navigate('/login')}
                                     className="font-medium text-primary-600 hover:text-primary-500 transition-colors"
                                 >
-                                    Create account
+                                    Sign in
                                 </button>
                             </p>
                         </div>
@@ -149,4 +221,4 @@ const Login = () => {
     );
 };
 
-export default Login;
+export default Register;
