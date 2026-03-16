@@ -42,14 +42,16 @@ const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/colleg
 const connectDB = async () => {
   try {
     const options = {
-      serverSelectionTimeoutMS: 10000, // Increased to 10 seconds
-      socketTimeoutMS: 60000, // Increased to 60 seconds
+      serverSelectionTimeoutMS: 15000, // Increased to 15 seconds
+      socketTimeoutMS: 60000, // 60 seconds
       connectTimeoutMS: 30000, // 30 seconds to connect
-      maxPoolSize: 10, // Maximum connection pool size
-      minPoolSize: 5,  // Minimum connection pool size
-      maxIdleTimeMS: 30000, // Close connections after 30s of inactivity
+      maxPoolSize: 10,
+      minPoolSize: 5,
+      maxIdleTimeMS: 30000,
       retryWrites: true,
-      w: 'majority'
+      w: 'majority',
+      bufferMaxEntries: 0, // Disable mongoose buffering
+      bufferCommands: false, // Disable mongoose buffering
     };
 
     const conn = await mongoose.connect(MONGODB_URI, options);
@@ -72,6 +74,7 @@ const connectDB = async () => {
     
   } catch (error) {
     console.error('Database connection error:', error);
+    console.log('Retrying connection in 5 seconds...');
     // Retry connection after 5 seconds
     setTimeout(connectDB, 5000);
   }

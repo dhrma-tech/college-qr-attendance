@@ -9,16 +9,29 @@ const loginUser = async (req, res) => {
     const { email, password } = req.body;
     console.log(`Login attempt for: ${email}`);
 
-    // Check database connection
-    if (mongoose.connection.readyState !== 1) {
-        console.log('Database not connected for login, attempting to reconnect...');
-        return res.status(503).json({ 
-            message: 'Database temporarily unavailable. Please try again in a few moments.' 
-        });
-    }
-
     try {
-        const user = await User.findOne({ email });
+        // Check database connection state
+        const connectionState = mongoose.connection.readyState;
+        console.log(`Database connection state: ${connectionState}`);
+        
+        if (connectionState === 0) {
+            // Disconnected - try to connect
+            console.log('Database disconnected, attempting to connect...');
+            await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/college-attendance');
+        }
+        
+        if (connectionState === 3) {
+            // Connecting - wait a bit and retry
+            console.log('Database connecting, waiting...');
+            await new Promise(resolve => setTimeout(resolve, 2000));
+        }
+
+        // Find user with timeout
+        const user = await Promise.race([
+            User.findOne({ email }),
+            new Promise((_, reject) => setTimeout(() => reject(new Error('Database timeout')), 10000))
+        ]);
+        
         if (!user) {
             console.log(`User not found: ${email}`);
             return res.status(401).json({ message: 'Invalid email or password' });
@@ -40,7 +53,7 @@ const loginUser = async (req, res) => {
         }
     } catch (err) {
         console.error('Login error:', err);
-        if (err.name === 'MongoTimeoutError' || err.name === 'MongoServerSelectionError') {
+        if (err.message === 'Database timeout' || err.name === 'MongoTimeoutError' || err.name === 'MongoServerSelectionError') {
             return res.status(503).json({ 
                 message: 'Database temporarily unavailable. Please try again in a few moments.' 
             });
@@ -58,16 +71,28 @@ const registerUser = async (req, res) => {
         
         console.log(`Registration attempt for: ${email}, role: ${role}`);
         
-        // Check database connection
-        if (mongoose.connection.readyState !== 1) {
-            console.log('Database not connected, attempting to reconnect...');
-            return res.status(503).json({ 
-                message: 'Database temporarily unavailable. Please try again in a few moments.' 
-            });
+        // Check database connection state
+        const connectionState = mongoose.connection.readyState;
+        console.log(`Database connection state: ${connectionState}`);
+        
+        if (connectionState === 0) {
+            // Disconnected - try to connect
+            console.log('Database disconnected, attempting to connect...');
+            await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/college-attendance');
         }
         
-        // Check if user already exists
-        const userExists = await User.findOne({ email });
+        if (connectionState === 3) {
+            // Connecting - wait a bit and retry
+            console.log('Database connecting, waiting...');
+            await new Promise(resolve => setTimeout(resolve, 2000));
+        }
+        
+        // Check if user already exists with timeout
+        const userExists = await Promise.race([
+            User.findOne({ email }),
+            new Promise((_, reject) => setTimeout(() => reject(new Error('Database timeout')), 10000))
+        ]);
+        
         if (userExists) {
             console.log(`User already exists: ${email}`);
             return res.status(400).json({ message: 'User already exists' });
@@ -95,7 +120,12 @@ const registerUser = async (req, res) => {
             };
         }
 
-        const user = await User.create(userData);
+        // Create user with timeout
+        const user = await Promise.race([
+            User.create(userData),
+            new Promise((_, reject) => setTimeout(() => reject(new Error('Database timeout')), 10000))
+        ]);
+        
         console.log(`User created successfully: ${email}`);
         
         // Return user data with token
@@ -108,7 +138,7 @@ const registerUser = async (req, res) => {
         });
     } catch (err) {
         console.error('Registration error:', err);
-        if (err.name === 'MongoTimeoutError' || err.name === 'MongoServerSelectionError') {
+        if (err.message === 'Database timeout' || err.name === 'MongoTimeoutError' || err.name === 'MongoServerSelectionError') {
             return res.status(503).json({ 
                 message: 'Database temporarily unavailable. Please try again in a few moments.' 
             });
