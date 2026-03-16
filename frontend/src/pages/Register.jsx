@@ -11,7 +11,8 @@ const Register = () => {
         email: '',
         password: '',
         confirmPassword: '',
-        role: 'student'
+        role: 'student',
+        passkey: ''
     });
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
@@ -37,12 +38,19 @@ const Register = () => {
         }
 
         try {
-            await api.post('/admin/register', {
+            const registrationData = {
                 name: formData.name,
                 email: formData.email,
                 password: formData.password,
                 role: formData.role
-            });
+            };
+            
+            // Add passkey only for teacher/HOD roles
+            if (formData.role === 'teacher' || formData.role === 'hod') {
+                registrationData.passkey = formData.passkey;
+            }
+            
+            await api.post('/admin/register', registrationData);
             
             toast.success('Account created successfully! Please login.');
             navigate('/login');
@@ -124,7 +132,7 @@ const Register = () => {
                         </div>
 
                         <div className="space-y-1.5">
-                            <label className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Institutional Email</label>
+                            <label className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Email Address</label>
                             <div className="relative group">
                                 <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-primary-500 transition-colors" />
                                 <input
@@ -134,7 +142,7 @@ const Register = () => {
                                     value={formData.email}
                                     onChange={handleChange}
                                     className="block w-full pl-12 pr-4 py-4 bg-slate-50/50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all font-medium placeholder-slate-400"
-                                    placeholder="your@college.edu"
+                                    placeholder="your@email.com"
                                 />
                             </div>
                         </div>
@@ -155,6 +163,31 @@ const Register = () => {
                                 </select>
                             </div>
                         </div>
+
+                        {(formData.role === 'teacher' || formData.role === 'hod') && (
+                            <motion.div 
+                                initial={{ opacity: 0, height: 0 }}
+                                animate={{ opacity: 1, height: 'auto' }}
+                                exit={{ opacity: 0, height: 0 }}
+                                className="space-y-1.5"
+                            >
+                                <label className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">
+                                    Teacher Passkey <span className="text-red-500">*</span>
+                                </label>
+                                <div className="relative group">
+                                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-primary-500 transition-colors" />
+                                    <input
+                                        type="password"
+                                        name="passkey"
+                                        value={formData.passkey}
+                                        onChange={handleChange}
+                                        className="block w-full pl-12 pr-4 py-4 bg-slate-50/50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all font-medium placeholder-slate-400"
+                                        placeholder="Enter teacher passkey"
+                                    />
+                                </div>
+                                <p className="text-xs text-slate-500 ml-1">Contact administration for the teacher passkey</p>
+                            </motion.div>
+                        )}
 
                         <div className="space-y-1.5">
                             <label className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Password</label>

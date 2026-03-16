@@ -160,7 +160,11 @@ const Landing = () => {
                     <div className="mt-8 text-center">
                         <div className="inline-flex items-center gap-2 bg-green-50 text-green-700 px-4 py-2 rounded-xl text-sm font-medium">
                             <CheckCircle className="w-4 h-4" />
-                            All accounts use the same password: <span className="font-mono bg-green-100 px-2 py-1 rounded">password123</span>
+                            All accounts use password: <span className="font-mono bg-green-100 px-2 py-1 rounded">password123</span>
+                        </div>
+                        <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-700 px-4 py-2 rounded-xl text-sm font-medium ml-2">
+                            <Lock className="w-4 h-4" />
+                            Teacher Passkey: <span className="font-mono bg-blue-100 px-2 py-1 rounded">teach123</span>
                         </div>
                     </div>
                 </motion.div>

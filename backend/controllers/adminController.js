@@ -55,17 +55,43 @@ const getSubjects = async (req, res) => {
 // --- User Management (Teacher/Student) ---
 const registerUser = async (req, res) => {
     try {
-        const { name, email, password, role, details } = req.body;
+        const { name, email, password, role, passkey } = req.body;
+        
+        // Check if user already exists
         const userExists = await User.findOne({ email });
         if (userExists) return res.status(400).json({ message: 'User already exists' });
 
+        // Validate passkey for teacher and HOD roles
+        if ((role === 'teacher' || role === 'hod') && passkey !== 'teach123') {
+            return res.status(400).json({ message: 'Invalid passkey for teacher/HOD registration' });
+        }
+
         const userData = { name, email, password, role };
-        if (role === 'student') userData.studentDetails = details;
-        if (role === 'teacher') userData.teacherDetails = details;
+        
+        // Add role-specific details
+        if (role === 'student') {
+            userData.studentDetails = {
+                rollNumber: `TEMP${Date.now()}`,
+                semester: 1,
+                division: 'A'
+            };
+        }
+        if (role === 'teacher' || role === 'hod') {
+            userData.teacherDetails = {
+                teacherId: `T${Date.now().toString().slice(-6)}`
+            };
+        }
 
         const user = await User.create(userData);
-        res.status(201).json({ _id: user._id, name: user.name, role: user.role });
+        
+        // Return user data without password
+        const { password: _, ...userWithoutPassword } = user.toObject();
+        res.status(201).json({ 
+            message: 'User registered successfully',
+            user: userWithoutPassword 
+        });
     } catch (err) {
+        console.error('Registration error:', err);
         res.status(400).json({ message: err.message });
     }
 };
