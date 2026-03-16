@@ -10,7 +10,8 @@
     "build": "npm run install-backend && npm run install-frontend && npm run build-frontend",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "server": "cd backend && npm run dev",
-    "client": "cd frontend && npm run dev"
+    "client": "cd frontend && npm run dev",
+    "postinstall": "npm run install-backend"
   },
   "dependencies": {
     "concurrently": "^8.2.2"
