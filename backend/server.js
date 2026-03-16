@@ -36,16 +36,40 @@ mongoose.connection.on('connected', () => console.log('Mongoose connected to DB'
 mongoose.connection.on('error', (err) => console.error('Mongoose connection error:', err));
 mongoose.connection.on('disconnected', () => console.log('Mongoose disconnected'));
 
-// Database connection with retry logic
+// Database connection with retry logic and better configuration
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/college-attendance';
 
 const connectDB = async () => {
   try {
-    const conn = await mongoose.connect(MONGODB_URI, {
-      serverSelectionTimeoutMS: 5000,
-      socketTimeoutMS: 45000,
-    });
+    const options = {
+      serverSelectionTimeoutMS: 10000, // Increased to 10 seconds
+      socketTimeoutMS: 60000, // Increased to 60 seconds
+      connectTimeoutMS: 30000, // 30 seconds to connect
+      maxPoolSize: 10, // Maximum connection pool size
+      minPoolSize: 5,  // Minimum connection pool size
+      maxIdleTimeMS: 30000, // Close connections after 30s of inactivity
+      retryWrites: true,
+      w: 'majority'
+    };
+
+    const conn = await mongoose.connect(MONGODB_URI, options);
     console.log(`MongoDB Connected: ${conn.connection.host}`);
+    
+    // Handle connection events
+    mongoose.connection.on('error', (err) => {
+      console.error('MongoDB connection error:', err);
+    });
+    
+    mongoose.connection.on('disconnected', () => {
+      console.log('MongoDB disconnected');
+      // Try to reconnect
+      setTimeout(connectDB, 5000);
+    });
+    
+    mongoose.connection.on('reconnected', () => {
+      console.log('MongoDB reconnected');
+    });
+    
   } catch (error) {
     console.error('Database connection error:', error);
     // Retry connection after 5 seconds

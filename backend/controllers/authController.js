@@ -8,25 +8,43 @@ const loginUser = async (req, res) => {
     const { email, password } = req.body;
     console.log(`Login attempt for: ${email}`);
 
-    const user = await User.findOne({ email });
-    if (!user) {
-        console.log(`User not found: ${email}`);
-        return res.status(401).json({ message: 'Invalid email or password' });
+    // Check database connection
+    if (mongoose.connection.readyState !== 1) {
+        console.log('Database not connected for login, attempting to reconnect...');
+        return res.status(503).json({ 
+            message: 'Database temporarily unavailable. Please try again in a few moments.' 
+        });
     }
 
-    const isMatch = await user.comparePassword(password);
-    console.log(`Password match for ${email}: ${isMatch}`);
+    try {
+        const user = await User.findOne({ email });
+        if (!user) {
+            console.log(`User not found: ${email}`);
+            return res.status(401).json({ message: 'Invalid email or password' });
+        }
 
-    if (isMatch) {
-        res.json({
-            _id: user._id,
-            name: user.name,
-            email: user.email,
-            role: user.role,
-            token: generateToken(user._id)
-        });
-    } else {
-        res.status(401).json({ message: 'Invalid email or password' });
+        const isMatch = await user.comparePassword(password);
+        console.log(`Password match for ${email}: ${isMatch}`);
+
+        if (isMatch) {
+            res.json({
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                role: user.role,
+                token: generateToken(user._id)
+            });
+        } else {
+            res.status(401).json({ message: 'Invalid email or password' });
+        }
+    } catch (err) {
+        console.error('Login error:', err);
+        if (err.name === 'MongoTimeoutError' || err.name === 'MongoServerSelectionError') {
+            return res.status(503).json({ 
+                message: 'Database temporarily unavailable. Please try again in a few moments.' 
+            });
+        }
+        res.status(500).json({ message: 'Server error during login' });
     }
 };
 
@@ -38,6 +56,14 @@ const registerUser = async (req, res) => {
         const { name, email, password, role, passkey } = req.body;
         
         console.log(`Registration attempt for: ${email}, role: ${role}`);
+        
+        // Check database connection
+        if (mongoose.connection.readyState !== 1) {
+            console.log('Database not connected, attempting to reconnect...');
+            return res.status(503).json({ 
+                message: 'Database temporarily unavailable. Please try again in a few moments.' 
+            });
+        }
         
         // Check if user already exists
         const userExists = await User.findOne({ email });
@@ -81,6 +107,11 @@ const registerUser = async (req, res) => {
         });
     } catch (err) {
         console.error('Registration error:', err);
+        if (err.name === 'MongoTimeoutError' || err.name === 'MongoServerSelectionError') {
+            return res.status(503).json({ 
+                message: 'Database temporarily unavailable. Please try again in a few moments.' 
+            });
+        }
         res.status(400).json({ message: err.message });
     }
 };
