@@ -50,7 +50,7 @@ const Register = () => {
                 registrationData.passkey = formData.passkey;
             }
             
-            await api.post('/admin/register', registrationData);
+            await api.post('/auth/register', registrationData);
             
             toast.success('Account created successfully! Please login.');
             navigate('/login');

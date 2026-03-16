@@ -30,6 +30,61 @@ const loginUser = async (req, res) => {
     }
 };
 
+// @desc    Register new user
+// @route   POST /api/auth/register
+// @access  Public
+const registerUser = async (req, res) => {
+    try {
+        const { name, email, password, role, passkey } = req.body;
+        
+        console.log(`Registration attempt for: ${email}, role: ${role}`);
+        
+        // Check if user already exists
+        const userExists = await User.findOne({ email });
+        if (userExists) {
+            console.log(`User already exists: ${email}`);
+            return res.status(400).json({ message: 'User already exists' });
+        }
+
+        // Validate passkey for teacher and HOD roles
+        if ((role === 'teacher' || role === 'hod') && passkey !== 'teach123') {
+            console.log(`Invalid passkey for role: ${role}`);
+            return res.status(400).json({ message: 'Invalid passkey for teacher/HOD registration' });
+        }
+
+        const userData = { name, email, password, role };
+        
+        // Add role-specific details
+        if (role === 'student') {
+            userData.studentDetails = {
+                rollNumber: `TEMP${Date.now()}`,
+                semester: 1,
+                division: 'A'
+            };
+        }
+        if (role === 'teacher' || role === 'hod') {
+            userData.teacherDetails = {
+                teacherId: `T${Date.now().toString().slice(-6)}`
+            };
+        }
+
+        const user = await User.create(userData);
+        console.log(`User created successfully: ${email}`);
+        
+        // Return user data with token
+        res.status(201).json({
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            token: generateToken(user._id)
+        });
+    } catch (err) {
+        console.error('Registration error:', err);
+        res.status(400).json({ message: err.message });
+    }
+};
+
 // @desc    Get user profile
 // @route   GET /api/auth/profile
 // @access  Private
@@ -53,4 +108,4 @@ const getUserProfile = async (req, res) => {
     }
 };
 
-module.exports = { loginUser, getUserProfile };
+module.exports = { loginUser, registerUser, getUserProfile };
