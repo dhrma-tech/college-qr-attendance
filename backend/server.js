@@ -5,7 +5,9 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 
 // Load environment variables
-dotenv.config();
+const envPath = path.resolve(__dirname, '.env');
+console.log(`Loading .env from ${envPath}`);
+dotenv.config({ path: envPath, override: true });
 
 const app = express();
 
