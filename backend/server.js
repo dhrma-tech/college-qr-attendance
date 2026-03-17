@@ -53,13 +53,10 @@ const connectDB = async () => {
       maxIdleTimeMS: 30000,
       retryWrites: true,
       w: 'majority',
-      bufferMaxEntries: 0, // Disable mongoose buffering
       bufferCommands: false, // Disable mongoose buffering
       // Add additional connection options for Atlas
       ssl: true,
-      sslValidate: false,
-      useNewUrlParser: true,
-      useUnifiedTopology: true
+      sslValidate: false
     };
 
     // Try Atlas first, then fallback to local

@@ -9,8 +9,18 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
+
 const LiveSession = () => {
     const { id } = useParams();
+    
+    // Improved safety check for QRCode component (handles default exports and React.memo/forwardRef objects)
+    const QRCodeComponent = QRCode?.default || QRCode;
+    const isValidComponent = QRCodeComponent && (
+        typeof QRCodeComponent === 'function' || 
+        typeof QRCodeComponent === 'string' || 
+        (typeof QRCodeComponent === 'object' && QRCodeComponent.$$typeof)
+    );
+    
     const [session, setSession] = useState(null);
     const [attendees, setAttendees] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -18,24 +28,41 @@ const LiveSession = () => {
     const [copied, setCopied] = useState(false);
 
     useEffect(() => {
+        console.log('[LiveSession] Initialized with ID:', id);
         const fetchSessionData = async () => {
+            console.log('[LiveSession] Fetching session data...');
             try {
                 const [sessionRes, attendeesRes] = await Promise.all([
                     api.get(`/attendance/teacher/sessions`),
                     api.get(`/attendance/session/${id}/records`)
                 ]);
                 
-                const currentSession = sessionRes.data.find(s => s._id === id);
+                const currentSession = (sessionRes.data || []).find(s => s._id === id);
+                console.log('[LiveSession] Current Session:', currentSession ? 'Found' : 'NOT FOUND');
                 setSession(currentSession);
-                setAttendees(attendeesRes.data);
-
-                if (currentSession) {
+                
+                const attendeesData = Array.isArray(attendeesRes.data) ? attendeesRes.data : [];
+                console.log('[LiveSession] Attendees Count:', attendeesData.length);
+                setAttendees(attendeesData);
+                
+                if (currentSession && currentSession.endTime) {
                     const expiry = new Date(currentSession.endTime).getTime();
                     const now = new Date().getTime();
-                    setTimeLeft(Math.max(0, Math.floor((expiry - now) / 1000)));
+                    const diff = expiry - now;
+                    const remaining = Math.max(0, Math.floor(diff / 1000));
+                    console.log('[LiveSession] Time Left (secs):', remaining);
+                    if (!isNaN(remaining)) {
+                        setTimeLeft(remaining);
+                    } else {
+                        console.warn('[LiveSession] NaN detected in remaining time calculation');
+                        setTimeLeft(0);
+                    }
+                } else if (currentSession) {
+                    console.log('[LiveSession] No endTime in session object');
+                    setTimeLeft(0);
                 }
             } catch (err) {
-                // Background polling errors shouldn't disrupt the UI unless it's the first load
+                console.error('Session fetch error in LiveSession:', err);
                 if (loading) toast.error('Connection lost');
             } finally {
                 setLoading(false);
@@ -55,8 +82,10 @@ const LiveSession = () => {
     }, [timeLeft]);
 
     const formatTime = (seconds) => {
-        const mins = Math.floor(seconds / 60);
-        const secs = seconds % 60;
+        const secsNum = parseInt(seconds);
+        if (isNaN(secsNum) || secsNum < 0) return "0:00";
+        const mins = Math.floor(secsNum / 60);
+        const secs = secsNum % 60;
         return `${mins}:${secs.toString().padStart(2, '0')}`;
     };
 
@@ -106,13 +135,13 @@ const LiveSession = () => {
                     </Link>
                     <div>
                         <div className="flex items-center gap-3">
-                            <h1 className="text-3xl font-black text-slate-900 tracking-tight">{session.subject?.name}</h1>
+                            <h1 className="text-3xl font-black text-slate-900 tracking-tight">{session.subject?.name || 'Session Detail'}</h1>
                             <span className="bg-primary-50 text-primary-700 text-[10px] font-black px-2.5 py-1 rounded-lg border border-primary-100 uppercase tracking-widest">Live</span>
                         </div>
                         <p className="text-slate-500 font-medium flex items-center gap-2 mt-1">
                             <span className="bg-slate-100 px-2 py-0.5 rounded-md text-slate-600 text-xs">Div {session.division}</span>
                             <span className="w-1 h-1 bg-slate-200 rounded-full"></span>
-                            <span className="text-sm">Attendance Protocol Activated</span>
+                            <span className="text-sm">Attendance Session Started</span>
                         </p>
                     </div>
                 </div>
@@ -131,7 +160,7 @@ const LiveSession = () => {
                                 className={`w-2 h-2 rounded-full ${timeLeft > 0 ? 'bg-emerald-500' : 'bg-red-500'}`} 
                             />
                             <span className={`text-[10px] font-black uppercase ${timeLeft > 0 ? 'text-emerald-600' : 'text-red-600'}`}>
-                                {timeLeft > 0 ? 'Protocol Active' : 'Expired'}
+                                {timeLeft > 0 ? 'Active' : 'Expired'}
                             </span>
                         </div>
                     </div>
@@ -152,16 +181,23 @@ const LiveSession = () => {
 
                         <div className="relative z-10 flex flex-col items-center">
                             <div className="bg-white p-6 rounded-[40px] shadow-sm border-8 border-slate-50 group-hover:border-primary-50 transition-all duration-700">
-                                <QRCode 
-                                    value={session.sessionToken} 
-                                    size={240}
-                                    level="H"
-                                    fgColor="#0f172a"
-                                />
+                                {isValidComponent ? (
+                                    <QRCodeComponent 
+                                        value={session?.sessionToken || 'INVALID_TOKEN'} 
+                                        size={240}
+                                        level="H"
+                                        fgColor="#0f172a"
+                                    />
+                                ) : (
+                                    <div className="w-[240px] h-[240px] flex items-center justify-center bg-slate-100 rounded-2xl text-slate-400 text-xs text-center p-4">
+                                        QRCode Component Load Error<br/>
+                                        Type: {typeof QRCodeComponent}
+                                    </div>
+                                )}
                             </div>
 
                             <div className="mt-10 w-full space-y-4">
-                                <p className="text-center text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">Session Token Identification</p>
+                                <p className="text-center text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">Session Token</p>
                                 <div 
                                     onClick={copyToken}
                                     className="bg-slate-50 border border-slate-200 p-4 rounded-2xl flex items-center justify-between cursor-pointer hover:bg-slate-100 transition-colors group/token"
@@ -204,7 +240,7 @@ const LiveSession = () => {
                         <div className="p-8 border-b border-slate-100 flex items-center justify-between bg-white/50">
                             <div>
                                 <h2 className="text-xl font-black text-slate-900 tracking-tight">Real-time Presence Feed</h2>
-                                <p className="text-xs text-slate-500 font-medium">Monitoring incoming cryptographic scans</p>
+                                <p className="text-xs text-slate-500 font-medium">Monitoring student attendance</p>
                             </div>
                             <div className="flex items-center gap-2">
                                 <motion.div 
@@ -219,44 +255,64 @@ const LiveSession = () => {
                         <div className="flex-1 overflow-y-auto px-4 py-4">
                             <div className="space-y-2">
                                 <AnimatePresence initial={false}>
-                                    {attendees.map((record, index) => (
-                                        <motion.div 
-                                            key={record._id}
-                                            initial={{ opacity: 0, x: -20, height: 0 }}
-                                            animate={{ opacity: 1, x: 0, height: 'auto' }}
-                                            exit={{ opacity: 0, scale: 0.9 }}
-                                            transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                                            className="bg-white hover:bg-slate-50 border border-slate-100 hover:border-slate-200 p-4 rounded-2xl flex items-center justify-between transition-all group"
-                                        >
-                                            <div className="flex items-center gap-4">
-                                                <div className="w-12 h-12 rounded-2xl bg-slate-900 flex items-center justify-center font-black text-white text-lg group-hover:bg-primary-600 transition-colors">
-                                                    {record.student?.name.charAt(0)}
-                                                </div>
-                                                <div>
-                                                    <p className="font-black text-slate-900 text-sm tracking-tight">{record.student?.name}</p>
-                                                    <p className="text-[10px] font-bold text-slate-400 font-mono tracking-widest uppercase truncate max-w-[120px]">
-                                                        {record.student?.studentDetails?.rollNumber}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            
-                                            <div className="flex items-center gap-8">
-                                                <div className="hidden md:block">
-                                                    <p className="text-[8px] font-black text-slate-400 uppercase text-right leading-none mb-1">Status</p>
-                                                    <div className="flex items-center gap-2 text-emerald-600 font-black text-[10px] uppercase tracking-widest">
-                                                        <ShieldCheck className="w-3 h-3" />
-                                                        Verified
+                                    {/* Show newest first: copy array, filter valid, reverse for chronological */}
+                                    {[...attendees]
+                                        .filter(r => r && r._id)
+                                        .reverse()
+                                        .map((record, index) => (
+                                            <motion.div 
+                                                key={record._id}
+                                                initial={{ opacity: 0, x: -20, height: 0 }}
+                                                animate={{ opacity: 1, x: 0, height: 'auto' }}
+                                                exit={{ opacity: 0, scale: 0.9 }}
+                                                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                                                className="bg-white hover:bg-slate-50 border border-slate-100 hover:border-slate-200 p-4 rounded-2xl flex items-center justify-between transition-all group"
+                                            >
+                                                <div className="flex items-center gap-4">
+                                                    <div className="w-12 h-12 rounded-2xl bg-slate-900 flex items-center justify-center font-black text-white text-lg group-hover:bg-primary-600 transition-colors">
+                                                        {record.student?.name?.charAt(0) || '?'}
+                                                    </div>
+                                                    <div>
+                                                        <p className="font-black text-slate-900 text-sm tracking-tight">{record.student?.name || 'Unknown Student'}</p>
+                                                        <div className="flex items-center gap-2 mt-0.5">
+                                                            <p className="text-[10px] font-bold text-slate-400 font-mono tracking-widest uppercase truncate max-w-[120px]">
+                                                                {record.student?.studentDetails?.prnNumber || record.student?.studentDetails?.rollNumber || 'NO-PRN'}
+                                                            </p>
+                                                            {record.student?.studentDetails?.batch && (
+                                                                <span className="text-[8px] bg-slate-100 px-1.5 py-0.5 rounded text-slate-500 font-black">
+                                                                    Batch {record.student.studentDetails.batch}
+                                                                </span>
+                                                            )}
+                                                        </div>
                                                     </div>
                                                 </div>
-                                                <div className="text-right">
-                                                    <p className="text-[8px] font-black text-slate-400 uppercase text-right leading-none mb-1">Timestamp</p>
-                                                    <p className="text-sm font-black text-slate-900">
-                                                        {new Date(record.markedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
-                                                    </p>
+                                                
+                                                <div className="flex items-center gap-8">
+                                                    <div className="hidden md:block">
+                                                        <p className="text-[8px] font-black text-slate-400 uppercase text-right leading-none mb-1">Status</p>
+                                                        <div className="flex items-center gap-2 text-emerald-600 font-black text-[10px] uppercase tracking-widest">
+                                                            <ShieldCheck className="w-3 h-3" />
+                                                            Verified
+                                                        </div>
+                                                    </div>
+                                                    <div className="text-right">
+                                                        <p className="text-[8px] font-black text-slate-400 uppercase text-right leading-none mb-1">Timestamp</p>
+                                                        <p className="text-sm font-black text-slate-900">
+                                                            {(() => {
+                                                                if (!record.markedAt) return '--:--:--';
+                                                                try {
+                                                                    const date = new Date(record.markedAt);
+                                                                    if (isNaN(date.getTime())) return '--:--:--';
+                                                                    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                                                                } catch (e) {
+                                                                    return '--:--:--';
+                                                                }
+                                                            })()}
+                                                        </p>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </motion.div>
-                                    )).reverse()}
+                                            </motion.div>
+                                        ))}
                                 </AnimatePresence>
 
                                 {attendees.length === 0 && (
@@ -264,7 +320,7 @@ const LiveSession = () => {
                                         <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mb-4 border border-slate-100">
                                             <Users className="w-8 h-8 opacity-20" />
                                         </div>
-                                        <p className="font-black text-xs uppercase tracking-[0.3em] opacity-40">Waiting for data Scans</p>
+                                        <p className="font-black text-xs uppercase tracking-[0.3em] opacity-40">Waiting for students to scan</p>
                                     </div>
                                 )}
                             </div>

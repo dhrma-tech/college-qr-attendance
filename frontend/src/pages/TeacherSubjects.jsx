@@ -36,8 +36,8 @@ const TeacherSubjects = () => {
         >
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white/50 backdrop-blur-md p-8 rounded-[32px] border border-white shadow-xl shadow-slate-200/20">
                 <div className="space-y-1">
-                    <h1 className="text-3xl font-black text-slate-900 tracking-tight">Academic Load</h1>
-                    <p className="text-sm font-medium text-slate-500">Your assigned subjects and course segments</p>
+                    <h1 className="text-3xl font-black text-slate-900 tracking-tight">My Subjects</h1>
+                    <p className="text-sm font-medium text-slate-500">Your assigned subjects and courses</p>
                 </div>
                 <div className="flex -space-x-3 overflow-hidden">
                     {[1, 2, 3].map((i) => (
@@ -78,7 +78,7 @@ const TeacherSubjects = () => {
                             <div className="pt-6 border-t border-slate-50 flex items-center justify-between">
                                 <div className="flex items-center gap-2">
                                     <div className="w-2 h-2 rounded-full bg-emerald-500" />
-                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Protocol Enabled</span>
+                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Active</span>
                                 </div>
                             </div>
 
@@ -87,7 +87,7 @@ const TeacherSubjects = () => {
                                 state={{ subjectId: subject._id, subjectName: subject.name }}
                                 className="w-full relative group/btn overflow-hidden py-4 px-6 rounded-2xl bg-slate-50 text-slate-900 font-black text-xs uppercase tracking-widest transition-all hover:bg-primary-600 hover:text-white flex items-center justify-center gap-3"
                             >
-                                <span className="relative z-10">Initialize Portal</span>
+                                <span className="relative z-10">View Sessions</span>
                                 <ChevronRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform relative z-10" />
                             </Link>
                         </div>
@@ -99,7 +99,7 @@ const TeacherSubjects = () => {
                         <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center border border-slate-100 shadow-sm text-slate-300">
                             <Layers className="w-8 h-8" />
                         </div>
-                        <h2 className="text-xl font-black text-slate-900 tracking-tight">Access Restricted</h2>
+                        <h2 className="text-xl font-black text-slate-900 tracking-tight">No Subjects Assigned</h2>
                         <p className="text-sm font-medium text-slate-400 max-w-xs">No academic subjects have been assigned to your profile by the system administrator.</p>
                     </div>
                 )}

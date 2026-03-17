@@ -38,6 +38,7 @@ const StudentScanner = () => {
 
     const handleMarkAttendance = async (token) => {
         setLoading(true);
+        console.log('[StudentScanner] Attempting scan with token:', token?.substring(0, 10), '...');
         try {
             await api.post('/attendance/scan', {
                 sessionToken: token,
@@ -45,11 +46,11 @@ const StudentScanner = () => {
             });
             setError(null);
             setScanned(true);
-            toast.success('Attendance verified!');
+            toast.success('Attendance marked!');
         } catch (err) {
             setError(err.response?.data?.message || 'Verification failed');
             setScanned(true);
-            toast.error('Identification failed');
+            toast.error('Failed to mark attendance');
         } finally {
             setLoading(false);
         }
@@ -74,8 +75,8 @@ const StudentScanner = () => {
             className="max-w-xl mx-auto space-y-8"
         >
             <div className="text-center space-y-2">
-                <h1 className="text-4xl font-black text-slate-900 tracking-tight">Scanner Portal</h1>
-                <p className="text-slate-500 font-medium">Authenticate your presence via QR protocol</p>
+                <h1 className="text-4xl font-black text-slate-900 tracking-tight">Scan QR Code</h1>
+                <p className="text-slate-500 font-medium">Scan the session QR code to mark attendance</p>
             </div>
 
             <AnimatePresence mode="wait">
@@ -145,7 +146,7 @@ const StudentScanner = () => {
                         
                         <div className="space-y-2">
                             <h2 className={`text-3xl font-black ${error ? 'text-red-900' : 'text-emerald-900'}`}>
-                                {error ? 'Access Denied' : 'Presence Verified'}
+                                {error ? 'Access Denied' : 'Attendance Verified'}
                             </h2>
                             <p className={`text-lg font-medium ${error ? 'text-red-600/80' : 'text-emerald-600/80'}`}>
                                 {error || 'Your attendance has been recorded for this session.'}
@@ -173,11 +174,10 @@ const StudentScanner = () => {
                         <Camera className="w-6 h-6 text-primary-400" />
                     </div>
                     <div>
-                        <p className="text-sm font-black text-white uppercase tracking-widest mb-2">Protocol: Anti-Proxy</p>
-                        <p className="text-xs text-slate-400 leading-relaxed font-medium">
-                            Self-authentication requires biometric or camera-based verification. 
-                            Institutional systems will cross-reference device signatures and timestamps 
-                            to ensure cryptographic integrity of your attendance record.
+                        <p className="text-sm font-black text-white uppercase tracking-widest mb-2">Secure Verification</p>
+                        <p className="text-xs text-white/50 leading-relaxed">
+                            Your attendance is securely validated using dynamic single-use tokens and
+                            location proximity verification to ensure data integrity.
                         </p>
                     </div>
                 </div>

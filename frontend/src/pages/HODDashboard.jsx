@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 import { 
     BarChart, Bar, XAxis, YAxis, CartesianGrid, 
-    Tooltip, ResponsiveContainer, AreaChart, Area
+    Tooltip, ResponsiveContainer, AreaChart, Area, Cell
 } from 'recharts';
 
 const HODDashboard = () => {
@@ -29,8 +29,8 @@ const HODDashboard = () => {
                     api.get('/hod/stats'),
                     api.get('/hod/faculty-performance')
                 ]);
-                setStats(statsRes.data);
-                setPerformance(perfRes.data);
+                setStats(statsRes.data || {});
+                setPerformance(Array.isArray(perfRes.data) ? perfRes.data : []);
             } catch (err) {
                 console.error('Failed to sync departmental node:', err);
             } finally {
@@ -40,7 +40,7 @@ const HODDashboard = () => {
         fetchData();
     }, []);
 
-    const departmentTrends = stats.departmentTrends || [];
+    const departmentTrends = Array.isArray(stats?.departmentTrends) ? stats.departmentTrends : [];
 
     const COLORS = ['#0ea5e9', '#6366f1', '#8b5cf6', '#ec4899'];
 
@@ -79,21 +79,21 @@ const HODDashboard = () => {
                         <Building className="w-10 h-10 text-primary-400" />
                     </div>
                     <div className="space-y-1">
-                        <h1 className="text-4xl font-black tracking-tight">Departmental Matrix</h1>
+                        <h1 className="text-4xl font-black tracking-tight">Department Overview</h1>
                         <p className="text-sm font-bold text-slate-400 flex items-center gap-2">
-                             Computer Science & Engineering Node
+                             Computer Science & Engineering
                             <span className="w-1 h-1 bg-slate-700 rounded-full" />
-                            Active Monitoring Protocol 3.0
+                            Live Tracking System
                         </p>
                     </div>
                 </div>
 
                 <div className="relative z-10 flex gap-4">
                     <button className="bg-white/10 text-white px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest border border-white/10 hover:bg-white/20 transition-all backdrop-blur-sm">
-                        Node Logs
+                        System Logs
                     </button>
                     <button className="bg-primary-500 text-white px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-primary-600 transition-all shadow-xl shadow-primary-500/20">
-                        Institutional Audit
+                        Generate Report
                     </button>
                 </div>
             </div>
@@ -101,14 +101,14 @@ const HODDashboard = () => {
             {/* Department Metrics Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                 <StatCard 
-                    title="Faculty Nodes" 
+                    title="Total Faculty" 
                     value={stats.totalFaculty} 
                     icon={UserCheck} 
                     color="bg-slate-900" 
                     delay={0.1}
                 />
                 <StatCard 
-                    title="Active Cohort" 
+                    title="Total Students" 
                     value={stats.totalStudents} 
                     icon={GraduationCap} 
                     color="bg-primary-600" 
@@ -144,8 +144,8 @@ const HODDashboard = () => {
                                 <Users className="w-6 h-6 text-primary-600" />
                             </div>
                             <div>
-                                <h3 className="text-2xl font-black text-slate-900 tracking-tight">Faculty Performance Vector</h3>
-                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Marking efficiency per academic node</p>
+                                <h3 className="text-2xl font-black text-slate-900 tracking-tight">Faculty Performance</h3>
+                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Attendance marking rate per faculty</p>
                             </div>
                         </div>
                     </div>
@@ -187,7 +187,7 @@ const HODDashboard = () => {
 
                     <div className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-6 pt-10 border-t border-slate-50">
                         {performance.map((f, i) => (
-                            <div key={f.name} className="text-center group cursor-default">
+                            <div key={f.name || `perf-${i}`} className="text-center group cursor-default">
                                 <p className="text-[20px] font-black text-slate-900 transition-transform group-hover:scale-110">{f.attendance}%</p>
                                 <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-1">{f.name}</p>
                             </div>
@@ -208,8 +208,8 @@ const HODDashboard = () => {
                                 <Activity className="w-6 h-6 text-indigo-600" />
                             </div>
                             <div>
-                                <h3 className="text-xl font-black text-slate-900 tracking-tight">Temporal Trends</h3>
-                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Weekly departmental throughput</p>
+                                <h3 className="text-xl font-black text-slate-900 tracking-tight">Attendance Trends</h3>
+                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Weekly department attendance</p>
                             </div>
                         </div>
 
@@ -252,12 +252,12 @@ const HODDashboard = () => {
                     </div>
 
                     <div className="bg-white p-10 rounded-[56px] border border-slate-200 shadow-xl shadow-slate-200/10">
-                        <h4 className="text-lg font-black text-slate-900 tracking-tight mb-8">System Integrity Status</h4>
+                        <h4 className="text-lg font-black text-slate-900 tracking-tight mb-8">System Status</h4>
                         <div className="space-y-6">
                             {[
-                                { label: 'Node Encryption', status: 'Optimal', col: 'emerald' },
-                                { label: 'Data Relay Cluster', status: 'Syncing', col: 'indigo' },
-                                { label: 'Attendance Bridge', status: 'Optimal', col: 'emerald' },
+                                { label: 'Security', status: 'Optimal', col: 'emerald' },
+                                { label: 'Database Sync', status: 'Syncing', col: 'indigo' },
+                                { label: 'Network Connection', status: 'Optimal', col: 'emerald' },
                             ].map((node) => (
                                 <div key={node.label} className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100">
                                     <div className="flex items-center gap-3">

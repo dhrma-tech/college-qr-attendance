@@ -67,7 +67,7 @@ const loginUser = async (req, res) => {
 // @access  Public
 const registerUser = async (req, res) => {
     try {
-        const { name, email, password, role, passkey } = req.body;
+        const { name, email, password, role, passkey, prnNumber, branch, batch, division, semester } = req.body;
         
         console.log(`Registration attempt for: ${email}, role: ${role}`);
         
@@ -110,8 +110,11 @@ const registerUser = async (req, res) => {
         if (role === 'student') {
             userData.studentDetails = {
                 rollNumber: `TEMP${Date.now()}`,
-                semester: 1,
-                division: 'A'
+                prnNumber: prnNumber,
+                branch: branch || 'General',
+                batch: batch || '2026',
+                semester: semester || 1,
+                division: division || 'A'
             };
         }
         if (role === 'teacher' || role === 'hod') {

@@ -12,7 +12,12 @@ const Register = () => {
         password: '',
         confirmPassword: '',
         role: 'student',
-        passkey: ''
+        passkey: '',
+        prnNumber: '',
+        branch: '',
+        batch: '',
+        division: 'A',
+        semester: '1'
     });
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
@@ -42,7 +47,13 @@ const Register = () => {
                 name: formData.name,
                 email: formData.email,
                 password: formData.password,
-                role: formData.role
+                role: formData.role,
+                // New student fields
+                prnNumber: formData.prnNumber,
+                branch: formData.branch,
+                batch: formData.batch,
+                division: formData.division,
+                semester: formData.semester
             };
             
             // Add passkey only for teacher/HOD roles
@@ -164,6 +175,76 @@ const Register = () => {
                             </div>
                         </div>
 
+                        {formData.role === 'student' && (
+                            <motion.div 
+                                initial={{ opacity: 0, height: 0 }}
+                                animate={{ opacity: 1, height: 'auto' }}
+                                className="grid grid-cols-2 gap-4"
+                            >
+                                <div className="col-span-2 space-y-1.5">
+                                    <label className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">PRN Number</label>
+                                    <input
+                                        type="text"
+                                        name="prnNumber"
+                                        required
+                                        value={formData.prnNumber}
+                                        onChange={handleChange}
+                                        className="block w-full px-4 py-4 bg-slate-50/50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all font-medium placeholder-slate-400"
+                                        placeholder="e.g. 202410101"
+                                    />
+                                </div>
+                                <div className="space-y-1.5">
+                                    <label className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Branch</label>
+                                    <input
+                                        type="text"
+                                        name="branch"
+                                        required
+                                        value={formData.branch}
+                                        onChange={handleChange}
+                                        className="block w-full px-4 py-4 bg-slate-50/50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all font-medium placeholder-slate-400"
+                                        placeholder="e.g. IT"
+                                    />
+                                </div>
+                                <div className="space-y-1.5">
+                                    <label className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Batch</label>
+                                    <input
+                                        type="text"
+                                        name="batch"
+                                        required
+                                        value={formData.batch}
+                                        onChange={handleChange}
+                                        className="block w-full px-4 py-4 bg-slate-50/50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all font-medium placeholder-slate-400"
+                                        placeholder="e.g. 2026"
+                                    />
+                                </div>
+                                <div className="space-y-1.5">
+                                    <label className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Division</label>
+                                    <select
+                                        name="division"
+                                        value={formData.division}
+                                        onChange={handleChange}
+                                        className="block w-full px-4 py-4 bg-slate-50/50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all font-medium text-slate-700"
+                                    >
+                                        <option value="A">Division A</option>
+                                        <option value="B">Division B</option>
+                                        <option value="C">Division C</option>
+                                    </select>
+                                </div>
+                                <div className="space-y-1.5">
+                                    <label className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Semester</label>
+                                    <input
+                                        type="number"
+                                        name="semester"
+                                        required
+                                        value={formData.semester}
+                                        onChange={handleChange}
+                                        className="block w-full px-4 py-4 bg-slate-50/50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all font-medium"
+                                        placeholder="1"
+                                    />
+                                </div>
+                            </motion.div>
+                        )}
+
                         {(formData.role === 'teacher' || formData.role === 'hod') && (
                             <motion.div 
                                 initial={{ opacity: 0, height: 0 }}
@@ -185,7 +266,7 @@ const Register = () => {
                                         placeholder="Enter teacher passkey"
                                     />
                                 </div>
-                                <p className="text-xs text-slate-500 ml-1">Contact administration for the teacher passkey</p>
+                                <p className="text-xs text-slate-500 ml-1">Required to verify staff accounts. Contact administration for the passkey.</p>
                             </motion.div>
                         )}
 

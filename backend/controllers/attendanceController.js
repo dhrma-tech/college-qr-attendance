@@ -30,6 +30,29 @@ const createSession = async (req, res) => {
 
         res.status(201).json(session);
 
+        // --- BROADCAST TO STUDENTS ---
+        // Find students in the same division, department, and course
+        const User = require('../models/User');
+        const students = await User.find({
+            role: 'student',
+            'studentDetails.department': subject.department,
+            'studentDetails.course': subject.course,
+            'studentDetails.division': division
+        });
+
+        console.log(`[Broadcast] Sending to ${students.length} students for Div ${division}`);
+
+        students.forEach(student => {
+            createNotification({
+                recipient: student._id,
+                type: 'session_started',
+                title: 'New Attendance Session',
+                message: `${subject.name} session started (Div ${division}). Scan now!`,
+                link: '/student/scan',
+                meta: { subjectName: subject.name, division, sessionToken }
+            });
+        });
+
         // Fire notification to teacher (non-blocking)
         createNotification({
             recipient: req.user._id,
@@ -45,10 +68,24 @@ const createSession = async (req, res) => {
 };
 
 const getTeacherSessions = async (req, res) => {
-    const sessions = await AttendanceSession.find({ teacher: req.user._id })
-        .populate('subject')
-        .sort('-createdAt');
-    res.json(sessions);
+    try {
+        const sessions = await AttendanceSession.find({ teacher: req.user._id })
+            .populate('subject')
+            .sort('-createdAt');
+        
+        // Enhance sessions with verified count
+        const enhancedSessions = await Promise.all(sessions.map(async (session) => {
+            const count = await AttendanceRecord.countDocuments({ session: session._id });
+            return {
+                ...session.toObject(),
+                verifiedCount: count
+            };
+        }));
+        
+        res.json(enhancedSessions);
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
 };
 
 const endSession = async (req, res) => {
@@ -72,14 +109,20 @@ const markAttendance = async (req, res) => {
         const { sessionToken, ipAddress, deviceFingerprint } = req.body;
 
         const session = await AttendanceSession.findOne({ sessionToken, active: true });
-        if (!session) return res.status(404).json({ message: 'Invalid or expired session' });
+        if (!session) {
+            console.log(`[Attendance] 404: Session not found or inactive for token: ${sessionToken?.substring(0, 8)}...`);
+            return res.status(404).json({ message: 'Invalid or expired session' });
+        }
 
         // Check if session has expired based on time
         if (new Date() > session.endTime) {
+            console.log(`[Attendance] 400: Session token ${sessionToken?.substring(0, 8)} expired at ${session.endTime}`);
             session.active = false;
             await session.save();
             return res.status(400).json({ message: 'Session has expired' });
         }
+
+        console.log(`[Attendance] Marking for student: ${req.user.email}, session: ${session._id}`);
 
         // Validate if student belongs to the division (Optional based on requirements)
         // Here we assume student role is already verified by middleware

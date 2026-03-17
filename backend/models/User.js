@@ -27,6 +27,9 @@ const userSchema = new mongoose.Schema({
     // Common fields for Student/Teacher embedded or referenced
     studentDetails: {
         rollNumber: String,
+        prnNumber: { type: String, unique: true, sparse: true },
+        branch: String,
+        batch: String,
         department: { type: mongoose.Schema.Types.ObjectId, ref: 'Department' },
         course: { type: mongoose.Schema.Types.ObjectId, ref: 'Course' },
         semester: Number,

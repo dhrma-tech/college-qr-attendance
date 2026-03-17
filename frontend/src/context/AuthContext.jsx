@@ -25,7 +25,9 @@ export const AuthProvider = ({ children }) => {
 
     const logout = () => {
         localStorage.removeItem('userInfo');
+        delete api.defaults.headers.common['Authorization'];
         setUser(null);
+        window.location.href = '/login';
     };
 
     return (

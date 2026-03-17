@@ -78,8 +78,8 @@ const HODReports = () => {
             {/* Report Control Header */}
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 bg-white/50 backdrop-blur-md p-8 rounded-[32px] border border-white shadow-xl shadow-slate-200/10">
                 <div className="space-y-1">
-                    <h1 className="text-3xl font-black text-slate-900 tracking-tight">Reporting Suite</h1>
-                    <p className="text-sm font-medium text-slate-500">Comprehensive departmental throughput analytics and audit logs</p>
+                        <h3 className="text-xl font-black text-slate-900 tracking-tight">Attendance Records</h3>
+                        <p className="text-xs text-slate-500 font-medium">Complete system history</p>
                 </div>
                 <div className="flex flex-wrap gap-4">
                     <button 
@@ -196,9 +196,9 @@ const HODReports = () => {
                     <table className="w-full text-left">
                         <thead>
                             <tr className="bg-slate-50/50">
-                                <th className="px-10 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Protocol Segment</th>
-                                <th className="px-10 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Faculty Primary</th>
-                                <th className="px-10 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Throughput</th>
+                                <th className="px-10 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Subject</th>
+                                <th className="px-10 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Teacher</th>
+                                <th className="px-10 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Attendance %</th>
                                 <th className="px-10 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Verification</th>
                                 <th className="px-10 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Actions</th>
                             </tr>

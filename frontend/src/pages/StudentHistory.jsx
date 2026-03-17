@@ -23,7 +23,7 @@ const StudentHistory = () => {
                 setHistory(historyRes.data);
                 setStats(statsRes.data);
             } catch (err) {
-                toast.error('Identity ledger sync failed');
+                toast.error('Failed to load history');
             } finally {
                 setLoading(false);
             }
@@ -53,8 +53,8 @@ const StudentHistory = () => {
             {/* Header section */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white/50 backdrop-blur-md p-8 rounded-[32px] border border-white shadow-xl shadow-slate-200/20">
                 <div className="space-y-1">
-                    <h1 className="text-3xl font-black text-slate-900 tracking-tight">Attendance Ledger</h1>
-                    <p className="text-sm font-medium text-slate-500">Cryptographically verified attendance records</p>
+                    <h1 className="text-3xl font-black text-slate-900 tracking-tight">Attendance History</h1>
+                    <p className="text-sm font-medium text-slate-500">Your attendance records</p>
                 </div>
                 <button onClick={handleExportPDF} className="flex items-center gap-3 bg-slate-900 text-white px-6 py-4 rounded-[20px] font-black text-xs uppercase tracking-widest hover:bg-primary-600 transition-all shadow-xl shadow-slate-900/10">
                     <Download className="w-4 h-4" />
@@ -91,7 +91,7 @@ const StudentHistory = () => {
                             <div>
                                 <p className="text-[9px] font-black uppercase tracking-[0.25em] text-white/50 mb-1">Overall Attendance</p>
                                 <p className="text-2xl font-black tracking-tight">
-                                    {overallIsLow ? 'Below Threshold' : 'On Protocol'}
+                                    {overallIsLow ? 'Below Normal' : 'Good Standing'}
                                 </p>
                                 <p className="text-xs text-white/60 font-bold mt-1">{stats.totalClasses} total classes logged</p>
                             </div>
@@ -197,7 +197,7 @@ const StudentHistory = () => {
                         <History className="w-6 h-6 text-primary-600" />
                         Verification History
                     </h2>
-                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-200">End-to-End Encrypted</span>
+                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-200">Securely Stored</span>
                 </div>
 
                 <div className="bg-white/80 backdrop-blur-xl rounded-[48px] border border-white shadow-2xl shadow-slate-200/20 overflow-hidden">
@@ -205,9 +205,9 @@ const StudentHistory = () => {
                         <table className="w-full text-left border-collapse">
                             <thead>
                                 <tr className="border-b border-slate-50 bg-slate-50/50">
-                                    <th className="px-10 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Protocol Segment</th>
-                                    <th className="px-10 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Node Primary</th>
-                                    <th className="px-10 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Timestamp</th>
+                                    <th className="px-10 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Subject</th>
+                                    <th className="px-10 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Teacher</th>
+                                    <th className="px-10 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Date & Time</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-50">
@@ -268,11 +268,11 @@ const StudentHistory = () => {
                         <AlertTriangle className="w-8 h-8 text-primary-400" />
                     </div>
                     <div>
-                        <h4 className="text-xl font-black tracking-tight mb-2">Protocol Requirement: 75% Verification</h4>
+                        <h4 className="text-xl font-black tracking-tight mb-2">Minimum 75% Attendance Required</h4>
                         <p className="text-sm text-slate-400 leading-relaxed font-bold max-w-3xl">
-                            Attendance maintenance is a prerequisite for examination authorization. 
-                            Modules falling below the <span className="text-primary-400">75 percentile threshold</span> will trigger access restrictions on the examination portal. 
-                            Contact the respective Node Head (HOD) for clarification on discrepancy logs.
+                            You must maintain at least 75% attendance to be eligible for exams. 
+                            If your attendance falls below this threshold, you may not be allowed to enter the exam portal. 
+                            Contact your HOD if you have any questions.
                         </p>
                     </div>
                 </div>

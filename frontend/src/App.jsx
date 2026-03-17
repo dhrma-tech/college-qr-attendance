@@ -3,6 +3,7 @@ import { Toaster } from 'react-hot-toast';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Layout from './components/Layout';
+import ErrorBoundary from './components/ErrorBoundary';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Landing from './pages/Landing';
@@ -45,6 +46,7 @@ const RoleDashboardRedirect = () => {
 function App() {
   return (
     <AuthProvider>
+    <ErrorBoundary>
         <Router>
             <Toaster position="top-right" />
             <Routes>
@@ -58,7 +60,7 @@ function App() {
                         <Layout />
                     </ProtectedRoute>
                 }>
-                    <Route index element={<Navigate to="/dashboard" replace />} />
+                    <Route index element={<RoleDashboardRedirect />} />
                     
                     {/* Role-Based Redirect for Home Dashboard */}
                     <Route path="/dashboard" element={
@@ -69,7 +71,7 @@ function App() {
                     
                     {/* Admin Routes */}
                     <Route path="/admin">
-                        <Route path="users" element={<ProtectedRoute roles={['admin']}><AdminUsers /></ProtectedRoute>} />
+                        <Route path="users" element={<ProtectedRoute roles={['admin', 'hod']}><AdminUsers /></ProtectedRoute>} />
                         <Route path="departments" element={<ProtectedRoute roles={['admin']}><div className="p-10 text-center text-slate-400 border-2 border-dashed rounded-2xl">Department Management (Seed Data Loaded)</div></ProtectedRoute>} />
                         <Route path="courses" element={<ProtectedRoute roles={['admin']}><div className="p-10 text-center text-slate-400 border-2 border-dashed rounded-2xl">Course Management (Seed Data Loaded)</div></ProtectedRoute>} />
                         <Route path="subjects" element={<ProtectedRoute roles={['admin']}><div className="p-10 text-center text-slate-400 border-2 border-dashed rounded-2xl">Subject Management (Seed Data Loaded)</div></ProtectedRoute>} />
@@ -101,6 +103,7 @@ function App() {
                 <Route path="/404" element={<NotFound />} />
             </Routes>
         </Router>
+    </ErrorBoundary>
     </AuthProvider>
   );
 }

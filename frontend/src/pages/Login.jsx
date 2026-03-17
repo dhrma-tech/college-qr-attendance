@@ -22,9 +22,19 @@ const Login = () => {
         setLoading(true);
         setError('');
         try {
-            await login(email, password);
+            const user = await login(email, password);
             toast.success('Welcome back!');
-            navigate(from, { replace: true });
+            
+            // Direct redirect based on role if no 'from' or if 'from' is just dashboard
+            if (!location.state?.from || from === '/dashboard') {
+                if (user.role === 'admin') navigate('/admin/users');
+                else if (user.role === 'hod') navigate('/hod/dashboard');
+                else if (user.role === 'teacher') navigate('/teacher/sessions');
+                else if (user.role === 'student') navigate('/student/scan');
+                else navigate('/dashboard');
+            } else {
+                navigate(from, { replace: true });
+            }
         } catch (err) {
             setError(err.response?.data?.message || 'Login failed. Please check your credentials.');
             toast.error('Authentication failed');
@@ -57,10 +67,10 @@ const Login = () => {
                         </div>
                     </div>
                     <h2 className="text-4xl font-black text-slate-900 tracking-tight">
-                        Gatekeeper<span className="text-primary-600">.</span>
+                        College Attendance<span className="text-primary-600">.</span>
                     </h2>
                     <p className="mt-3 text-slate-500 font-medium tracking-wide uppercase text-[10px]">
-                        College QR Attendance Protocol
+                        QR Attendance System
                     </p>
                 </motion.div>
             </div>
@@ -87,7 +97,7 @@ const Login = () => {
                         )}
                         
                         <div className="space-y-1.5">
-                            <label className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Institutional Email</label>
+                            <label className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Email Address</label>
                             <div className="relative group">
                                 <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-primary-500 transition-colors" />
                                 <input
@@ -96,7 +106,7 @@ const Login = () => {
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     className="block w-full pl-12 pr-4 py-4 bg-slate-50/50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all font-medium placeholder-slate-400"
-                                    placeholder="your@college.edu"
+                                    placeholder="your@email.com"
                                 />
                             </div>
                         </div>
@@ -124,7 +134,7 @@ const Login = () => {
                             className="w-full relative group overflow-hidden py-4 px-6 rounded-2xl shadow-xl shadow-primary-200/50 bg-primary-600 text-white font-bold text-sm tracking-wide transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             <span className="relative z-10 flex items-center justify-center gap-2">
-                                {loading ? 'Validating Token...' : 'Access Portal'}
+                                {loading ? 'Signing In...' : 'Sign In'}
                                 {!loading && <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />}
                             </span>
                             <div className="absolute inset-0 bg-gradient-to-r from-primary-700 to-indigo-700 opacity-0 group-hover:opacity-100 transition-opacity" />
