@@ -1,162 +1,160 @@
 import { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { QrCode, Lock, Mail, AlertCircle, ChevronRight, UserCheck, GraduationCap, Shield, LayoutDashboard } from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { ArrowRight, Lock, Mail, ShieldCheck } from 'lucide-react';
 import { motion } from 'framer-motion';
-import toast from 'react-hot-toast';
+import Logo from '../components/Logo';
+import { useAuth } from '../context/AuthContext';
+import { demoUsers, product } from '../data/siteData';
+
+const MotionDiv = motion.div;
 
 const Login = () => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
-    const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState(demoUsers[0].email);
+  const [password, setPassword] = useState('studio123');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const { login } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
 
-    const { login } = useAuth();
-    const navigate = useNavigate();
-    const location = useLocation();
+  const from = location.state?.from?.pathname || '/workspace';
 
-    const from = location.state?.from?.pathname || '/dashboard';
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setError('');
+    setLoading(true);
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setLoading(true);
-        setError('');
-        try {
-            const user = await login(email, password);
-            toast.success('Welcome back!');
-            
-            // Direct redirect based on role if no 'from' or if 'from' is just dashboard
-            if (!location.state?.from || from === '/dashboard') {
-                if (user.role === 'admin') navigate('/admin/users');
-                else if (user.role === 'hod') navigate('/hod/dashboard');
-                else if (user.role === 'teacher') navigate('/teacher/sessions');
-                else if (user.role === 'student') navigate('/student/scan');
-                else navigate('/dashboard');
-            } else {
-                navigate(from, { replace: true });
-            }
-        } catch (err) {
-            setError(err.response?.data?.message || 'Login failed. Please check your credentials.');
-            toast.error('Authentication failed');
-        } finally {
-            setLoading(false);
-        }
-    };
+    try {
+      await login(email, password);
+      navigate(from, { replace: true });
+    } catch (loginError) {
+      setError(loginError.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    return (
-        <div className="min-h-screen bg-[#f8fafc] flex flex-col justify-center relative overflow-hidden">
-            {/* Animated Background Orbs */}
-            <div className="absolute top-0 left-0 w-full h-full overflow-hidden -z-10">
-                <motion.div 
-                    animate={{ scale: [1, 1.2, 1], x: [0, 100, 0], y: [0, 50, 0] }}
-                    transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                    className="absolute -top-20 -left-20 w-96 h-96 bg-primary-200/40 rounded-full blur-3xl"
-                />
-                <motion.div 
-                    animate={{ scale: [1, 1.3, 1], x: [0, -100, 0], y: [0, -50, 0] }}
-                    transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-                    className="absolute -bottom-20 -right-20 w-96 h-96 bg-indigo-200/40 rounded-full blur-3xl"
-                />
-            </div>
-
-            <div className="sm:mx-auto sm:w-full sm:max-w-md text-center px-6">
-                <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-                    <div className="inline-flex items-center justify-center p-3 bg-white rounded-2xl shadow-xl border border-slate-100 mb-6">
-                        <div className="bg-primary-600 p-2 rounded-xl">
-                            <QrCode className="h-8 w-8 text-white" />
-                        </div>
-                    </div>
-                    <h2 className="text-4xl font-black text-slate-900 tracking-tight">
-                        College Attendance<span className="text-primary-600">.</span>
-                    </h2>
-                    <p className="mt-3 text-slate-500 font-medium tracking-wide uppercase text-[10px]">
-                        QR Attendance System
-                    </p>
-                </motion.div>
-            </div>
-
-            <motion.div 
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.4, delay: 0.2 }}
-                className="mt-10 sm:mx-auto sm:w-full sm:max-w-[440px] px-6"
-            >
-                <div className="bg-white/80 backdrop-blur-xl py-10 px-8 shadow-2xl shadow-primary-200/20 sm:rounded-[32px] sm:px-12 border border-white/20 relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-primary-50/50 rounded-full -mr-16 -mt-16 blur-2xl" />
-
-                    <form className="space-y-6 relative z-10" onSubmit={handleSubmit}>
-                        {error && (
-                            <motion.div 
-                                initial={{ opacity: 0, x: -10 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                className="bg-red-50 border border-red-100 text-red-600 px-4 py-3 rounded-2xl flex items-center gap-3 text-sm font-medium"
-                            >
-                                <AlertCircle className="w-5 h-5 flex-shrink-0" />
-                                {error}
-                            </motion.div>
-                        )}
-                        
-                        <div className="space-y-1.5">
-                            <label className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Email Address</label>
-                            <div className="relative group">
-                                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-primary-500 transition-colors" />
-                                <input
-                                    type="email"
-                                    required
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    className="block w-full pl-12 pr-4 py-4 bg-slate-50/50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all font-medium placeholder-slate-400"
-                                    placeholder="your@email.com"
-                                />
-                            </div>
-                        </div>
-
-                        <div className="space-y-1.5">
-                            <label className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Password</label>
-                            <div className="relative group">
-                                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-primary-500 transition-colors" />
-                                <input
-                                    type="password"
-                                    required
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    className="block w-full pl-12 pr-4 py-4 bg-slate-50/50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all font-medium placeholder-slate-400"
-                                    placeholder="••••••••"
-                                />
-                            </div>
-                        </div>
-
-                        <motion.button
-                            whileHover={{ scale: 1.01 }}
-                            whileTap={{ scale: 0.98 }}
-                            type="submit"
-                            disabled={loading}
-                            className="w-full relative group overflow-hidden py-4 px-6 rounded-2xl shadow-xl shadow-primary-200/50 bg-primary-600 text-white font-bold text-sm tracking-wide transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                            <span className="relative z-10 flex items-center justify-center gap-2">
-                                {loading ? 'Signing In...' : 'Sign In'}
-                                {!loading && <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />}
-                            </span>
-                            <div className="absolute inset-0 bg-gradient-to-r from-primary-700 to-indigo-700 opacity-0 group-hover:opacity-100 transition-opacity" />
-                        </motion.button>
-
-                        <div className="text-center">
-                            <p className="text-sm text-slate-500">
-                                Don't have an account?{' '}
-                                <button
-                                    type="button"
-                                    onClick={() => navigate('/register')}
-                                    className="font-medium text-primary-600 hover:text-primary-500 transition-colors"
-                                >
-                                    Create account
-                                </button>
-                            </p>
-                        </div>
-                    </form>
-                </div>
-            </motion.div>
+  return (
+    <main className="grid min-h-screen bg-paper text-ink lg:grid-cols-[0.95fr_1.05fr]">
+      <section className="hidden border-r border-ink/10 bg-ink p-10 text-white lg:flex lg:flex-col lg:justify-between">
+        <div className="[&_span]:text-white [&_span_span:last-child]:text-white/50">
+          <Logo />
         </div>
-    );
+        <div className="max-w-xl">
+          <p className="text-xs font-black uppercase tracking-[0.22em] text-citron">Private campus studio</p>
+          <h1 className="mt-5 text-5xl font-black tracking-tight">
+            One place for prompts, projects, and launch-ready digital work.
+          </h1>
+          <p className="mt-6 text-lg font-semibold leading-8 text-white/60">
+            Sign in as the studio lead, a faculty mentor, or a student creator to explore the production workspace.
+          </p>
+        </div>
+        <div className="grid grid-cols-3 gap-3">
+          {['Prompt OS', 'Review flow', 'Project board'].map((item) => (
+            <div key={item} className="rounded-lg border border-white/10 bg-white/10 p-4">
+              <p className="text-sm font-black">{item}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="flex min-h-screen items-center justify-center px-4 py-20 sm:px-6">
+        <MotionDiv
+          initial={{ opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45 }}
+          className="w-full max-w-md"
+        >
+          <div className="mb-10 flex justify-center lg:hidden">
+            <Logo />
+          </div>
+
+          <div className="rounded-lg border border-ink/10 bg-white p-6 shadow-crisp sm:p-8">
+            <div className="mb-8">
+              <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-lg bg-ink text-white">
+                <ShieldCheck className="h-6 w-6 text-citron" />
+              </div>
+              <h2 className="text-3xl font-black tracking-tight">Enter {product.name}</h2>
+              <p className="mt-3 text-sm font-semibold leading-6 text-ink/60">
+                Use the demo college accounts below. Production auth can be connected later without changing the UI.
+              </p>
+            </div>
+
+            <form className="space-y-5" onSubmit={handleSubmit}>
+              {error && (
+                <div className="rounded-lg border border-coral/25 bg-coral/10 px-4 py-3 text-sm font-bold text-coral">
+                  {error}
+                </div>
+              )}
+
+              <label className="block">
+                <span className="text-xs font-black uppercase tracking-[0.16em] text-ink/50">College email</span>
+                <span className="relative mt-2 block">
+                  <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink/40" />
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(event) => setEmail(event.target.value)}
+                    className="h-12 w-full rounded-lg border border-ink/10 bg-paper pl-10 pr-4 text-sm font-bold text-ink outline-none transition placeholder:text-ink/40 focus:border-teal focus:ring-4 focus:ring-teal/10"
+                    placeholder="name@college.edu"
+                    required
+                  />
+                </span>
+              </label>
+
+              <label className="block">
+                <span className="text-xs font-black uppercase tracking-[0.16em] text-ink/50">Password</span>
+                <span className="relative mt-2 block">
+                  <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink/40" />
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={(event) => setPassword(event.target.value)}
+                    className="h-12 w-full rounded-lg border border-ink/10 bg-paper pl-10 pr-4 text-sm font-bold text-ink outline-none transition placeholder:text-ink/40 focus:border-teal focus:ring-4 focus:ring-teal/10"
+                    required
+                  />
+                </span>
+              </label>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="flex h-12 w-full items-center justify-center gap-2 rounded-md bg-ink px-5 text-sm font-black text-white transition hover:bg-teal disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {loading ? 'Opening workspace...' : 'Open Workspace'}
+                {!loading && <ArrowRight className="h-4 w-4" />}
+              </button>
+            </form>
+
+            <div className="mt-8 grid gap-2">
+              {demoUsers.map((user) => (
+                <button
+                  key={user.email}
+                  type="button"
+                  onClick={() => {
+                    setEmail(user.email);
+                    setPassword(user.password);
+                    setError('');
+                  }}
+                  className="flex items-center justify-between rounded-lg border border-ink/10 bg-paper px-4 py-3 text-left transition hover:border-teal"
+                >
+                  <span>
+                    <span className="block text-sm font-black text-ink">{user.name}</span>
+                    <span className="block text-xs font-bold text-ink/50">{user.role}</span>
+                  </span>
+                  <span className="text-xs font-black text-teal">{user.email}</span>
+                </button>
+              ))}
+            </div>
+
+            <Link to="/" className="mt-6 inline-flex text-sm font-black text-ink/50 transition hover:text-ink">
+              Back to landing
+            </Link>
+          </div>
+        </MotionDiv>
+      </section>
+    </main>
+  );
 };
 
 export default Login;

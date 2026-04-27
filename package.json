@@ -1,19 +1,12 @@
 {
-  "name": "college-qr-attendance",
+  "name": "campusforge-ai-studio",
   "version": "1.0.0",
-  "description": "Gatekeeper College QR Attendance Protocol",
+  "description": "Single-college AI prompt and workflow platform for web development and digital creation.",
   "scripts": {
-    "start": "node backend/server.js",
-    "install-backend": "cd backend && npm install",
-    "install-frontend": "cd frontend && npm install --include=dev",
-    "build-frontend": "cd frontend && npm run build",
-    "build": "npm run install-backend && npm run install-frontend && npm run build-frontend",
-    "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "server": "cd backend && npm run dev",
-    "client": "cd frontend && npm run dev",
-    "postinstall": "npm run install-backend"
-  },
-  "dependencies": {
-    "concurrently": "^8.2.2"
+    "dev": "npm --prefix frontend run dev",
+    "build": "npm --prefix frontend install && npm --prefix frontend run build",
+    "start": "npm --prefix frontend run preview",
+    "lint": "npm --prefix frontend run lint",
+    "preview": "npm --prefix frontend run preview"
   }
 }

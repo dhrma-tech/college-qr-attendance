@@ -1,39 +1,45 @@
-# College QR Attendance Management System
+# CampusForge AI Studio
 
-A modern, secure, role-based attendance management platform built with the MERN stack.
+A premium single-college AI prompt and workflow platform for web development, digital creation, and student/faculty production teams.
 
-## Tech Stack
-- **Frontend**: React, Vite, TailwindCSS, Lucide Icons, Recharts
-- **Backend**: Node.js, Express, MongoDB
-- **Auth**: JWT, BcryptJS
-- **QR**: Dynamic Secure Tokens
+## What It Includes
 
-## Setup Instructions
+- Cinematic landing page with clear product positioning and calls to action.
+- Local demo authentication for one college workspace.
+- Workspace dashboard with prompt builder, project pipeline, metrics, and review queue.
+- Prompt library with search, categories, and copy-ready templates.
+- Project board for website and digital creation workflows.
+- Consistent responsive UI built with React, Vite, Tailwind CSS, Lucide icons, Framer Motion, and Recharts.
 
-### Prerequisites
-- Node.js (v16+)
-- MongoDB (Running locally or Atlas)
+## Getting Started
 
-### 1. Backend Setup
-1. `cd backend`
-2. `npm install`
-3. Create `.env` file (see `.env` for template)
-4. Seed the database: `node seed.js`
-5. Start the server: `npm run dev` (or `node server.js`)
+```bash
+npm run dev
+```
 
-### 2. Frontend Setup
-1. `cd frontend`
-2. `npm install`
-3. Start the dev server: `npm run dev`
+The app runs from the `frontend` workspace.
 
-## Default Roles & Credentials
-| Role | Email | Password |
-| --- | --- | --- |
-| Admin | admin@college.edu | password123 |
-| Teacher | alan@college.edu | password123 |
-| Student | student1@college.edu | password123 |
+## Build
+
+```bash
+npm run build
+npm run preview
+```
+
+## Demo Login
+
+Use any of these demo users with password `studio123`:
+
+| Role | Email |
+| --- | --- |
+| Studio Lead | lead@college.edu |
+| Faculty Mentor | mentor@college.edu |
+| Student Creator | creator@college.edu |
 
 ## Project Structure
-- `/backend`: Core API, models, and controllers.
-- `/frontend`: React application with dashboard and scanner.
-- `/seed.js`: Database initialization script.
+
+- `frontend/src/pages`: Landing, login, workspace, library, projects, settings, and fallback pages.
+- `frontend/src/layouts`: Protected workspace shell.
+- `frontend/src/context`: Local demo authentication.
+- `frontend/src/data`: Single source of product content and demo workflow data.
+- `frontend/src/components`: Shared UI components.
