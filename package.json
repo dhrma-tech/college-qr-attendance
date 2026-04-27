@@ -1,12 +1,41 @@
 {
-  "name": "campusforge-ai-studio",
+  "name": "college-qr-attendance",
   "version": "1.0.0",
-  "description": "Single-college AI prompt and workflow platform for web development and digital creation.",
+  "private": true,
+  "description": "Single-college QR attendance platform built with Next.js, Supabase, Tailwind CSS, and Vercel.",
   "scripts": {
-    "dev": "npm --prefix frontend run dev",
-    "build": "npm --prefix frontend install && npm --prefix frontend run build",
-    "start": "npm --prefix frontend run preview",
-    "lint": "npm --prefix frontend run lint",
-    "preview": "npm --prefix frontend run preview"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@radix-ui/react-slot": "^1.1.0",
+    "@supabase/ssr": "^0.5.2",
+    "@supabase/supabase-js": "^2.45.4",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.1",
+    "html5-qrcode": "^2.3.8",
+    "jspdf": "^2.5.2",
+    "lucide-react": "^0.468.0",
+    "next": "^14.2.15",
+    "qrcode": "^1.5.4",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "recharts": "^2.12.7",
+    "tailwind-merge": "^2.5.4"
+  },
+  "devDependencies": {
+    "@types/node": "^22.7.6",
+    "@types/qrcode": "^1.5.5",
+    "@types/react": "^18.3.11",
+    "@types/react-dom": "^18.3.1",
+    "autoprefixer": "^10.4.20",
+    "eslint": "^8.57.1",
+    "eslint-config-next": "^14.2.15",
+    "postcss": "^8.4.47",
+    "tailwindcss": "^3.4.14",
+    "typescript": "^5.6.3"
   }
 }

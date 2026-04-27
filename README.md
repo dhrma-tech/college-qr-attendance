@@ -1,45 +1,84 @@
-# CampusForge AI Studio
+# College QR Attendance
 
-A premium single-college AI prompt and workflow platform for web development, digital creation, and student/faculty production teams.
+College QR Attendance is an open-source attendance platform for one college deployment. Teachers start secure QR sessions, students scan from mobile browsers, and HOD/admin teams monitor attendance health with clean role-based dashboards.
 
-## What It Includes
+The app is built for Vercel + Supabase with a mobile-first scan flow, rotating QR token architecture, geofence-ready validation, realtime-ready teacher sessions, and open-source setup files.
 
-- Cinematic landing page with clear product positioning and calls to action.
-- Local demo authentication for one college workspace.
-- Workspace dashboard with prompt builder, project pipeline, metrics, and review queue.
-- Prompt library with search, categories, and copy-ready templates.
-- Project board for website and digital creation workflows.
-- Consistent responsive UI built with React, Vite, Tailwind CSS, Lucide icons, Framer Motion, and Recharts.
+## Features
 
-## Getting Started
+- Student, teacher, HOD, and admin portals with separate route trees.
+- QR attendance session UI with live counter, rotating-token copy, and projector-friendly display.
+- Mobile scan landing page for `/scan/[token]`.
+- Student attendance summary, subject breakdowns, and profile UX.
+- Teacher session, roster, and report screens.
+- HOD department visibility, low-attendance alerts, and teacher performance views.
+- Admin setup screens for departments, teachers, students, subjects, timetable, config, backups, and audit logs.
+- Supabase schema migration, seed data, RLS policy foundation, and Edge Function stubs.
+- Vercel-ready Next.js 14 App Router project structure.
+
+## Stack
+
+- Next.js 14 App Router
+- Supabase Auth, PostgreSQL, Realtime, Storage, Edge Functions
+- Tailwind CSS with shadcn-style UI primitives
+- Lucide icons, Recharts, qrcode, html5-qrcode
+- Vercel deployment
+
+## Quick Start
 
 ```bash
+npm install
 npm run dev
 ```
 
-The app runs from the `frontend` workspace.
+Open `http://localhost:3000`.
 
-## Build
+## Environment
+
+Copy `.env.example` to `.env.local` and fill your Supabase project values.
 
 ```bash
-npm run build
-npm run preview
+cp .env.example .env.local
 ```
 
-## Demo Login
+## Supabase Setup
 
-Use any of these demo users with password `studio123`:
+1. Create a Supabase project.
+2. Run `supabase/migrations/0001_initial_schema.sql`.
+3. Optionally load `supabase/seed.sql` for demo data.
+4. Enable email/password auth.
+5. Add storage buckets for profile photos and exports.
 
-| Role | Email |
-| --- | --- |
-| Studio Lead | lead@college.edu |
-| Faculty Mentor | mentor@college.edu |
-| Student Creator | creator@college.edu |
+## Vercel Setup
+
+1. Import the repository in Vercel.
+2. Add the environment variables from `.env.example`.
+3. Set the build command to `npm run build`.
+4. Deploy.
+
+## First Admin Workflow
+
+1. Configure college details in `/admin/config`.
+2. Create departments and assign HODs.
+3. Import teachers and students.
+4. Create subjects and subject assignments.
+5. Add timetable slots.
+6. Teachers can start QR sessions from `/teacher/attendance`.
 
 ## Project Structure
 
-- `frontend/src/pages`: Landing, login, workspace, library, projects, settings, and fallback pages.
-- `frontend/src/layouts`: Protected workspace shell.
-- `frontend/src/context`: Local demo authentication.
-- `frontend/src/data`: Single source of product content and demo workflow data.
-- `frontend/src/components`: Shared UI components.
+```text
+src/app        Next.js routes and layouts
+src/components Shared application and UI components
+src/lib        Config, mock data, Supabase helpers, attendance utilities
+src/styles     Global CSS entry
+supabase       Migrations, seed data, Edge Function stubs
+```
+
+## Status
+
+This rebuild provides a production-ready frontend architecture and Supabase-ready backend contract. The next step is connecting the UI actions to a live Supabase project and completing server-side token validation.
+
+## License
+
+MIT
