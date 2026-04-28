@@ -40,6 +40,12 @@ const labels: Record<Role, { title: string; detail: string; target: string; side
   }
 };
 
+const signupHref: Partial<Record<Role, string>> = {
+  student: "/register",
+  teacher: "/teacher/register",
+  hod: "/hod/register"
+};
+
 export function LoginCard({ role }: { role: Role }) {
   const copy = labels[role];
   const [showPassword, setShowPassword] = useState(false);
@@ -116,11 +122,21 @@ export function LoginCard({ role }: { role: Role }) {
               </Button>
             </form>
             <p className="mt-6 text-center text-sm font-semibold text-ink/50">
-              {role === "student" ? "Are you a teacher or HOD? " : "Wrong portal? "}
-              <Link href={role === "student" ? "/teacherlogin" : "/login"} className="font-black text-teal">
-                {role === "student" ? "Staff Login" : "Student Login"}
-              </Link>
+              {signupHref[role] ? "Need an account? " : "Admin accounts are created internally. "}
+              {signupHref[role] && (
+                <Link href={signupHref[role]} className="font-black text-teal">
+                  Request signup
+                </Link>
+              )}
             </p>
+            {role === "student" && (
+              <p className="mt-3 text-center text-sm font-semibold text-ink/50">
+                Are you staff?{" "}
+                <Link href="/teacherlogin" className="font-black text-teal">
+                  Staff Login
+                </Link>
+              </p>
+            )}
             <Link href="/" className="mt-4 block text-center text-sm font-black text-ink/45">
               Back to college site
             </Link>

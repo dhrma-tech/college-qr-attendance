@@ -34,6 +34,12 @@ export const apiWorkflowPaths = [
     path: "/api/reports/attendance",
     label: "Attendance report",
     database: "student_attendance_summary"
+  },
+  {
+    method: "POST",
+    path: "/api/signup",
+    label: "Create pending signup request",
+    database: "signup_requests"
   }
 ];
 
@@ -47,6 +53,10 @@ export const databaseWorkflowPaths = [
   "timetable",
   "attendance_sessions",
   "attendance_records",
+  "signup_requests",
+  "academic_structure_items",
+  "attendance_rule_sets",
+  "pending_account_approvals",
   "student_attendance_summary",
   "active_session_status",
   "low_attendance_alerts",

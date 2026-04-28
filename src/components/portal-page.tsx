@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { CalendarDays, CheckCircle2, Download, Plus, Search } from "lucide-react";
 import { AlertBanner } from "@/components/alert-banner";
+import { AdminStructureManager } from "@/components/admin-structure-manager";
 import { AttendanceCharts } from "@/components/attendance-chart";
 import { AttendanceBadge } from "@/components/attendance-badge";
 import { ApiSurfaceCard, BackendPipeline } from "@/components/backend-pipeline";
@@ -488,19 +489,7 @@ function ProfilePanel({ role }: { role: string }) {
 }
 
 function ConfigPanel() {
-  return (
-    <Card>
-      <CardContent className="grid gap-4 p-6 sm:grid-cols-2">
-        <Input placeholder="College name" />
-        <Input placeholder="College code" />
-        <Input placeholder="Attendance threshold: 75" />
-        <Input placeholder="QR rotation seconds: 30" />
-        <Input placeholder="Geofence radius meters: 100" />
-        <Input placeholder="Current semester" />
-        <Button className="sm:col-span-2">Save College Config</Button>
-      </CardContent>
-    </Card>
-  );
+  return <AdminStructureManager />;
 }
 
 function BackupPanel() {
