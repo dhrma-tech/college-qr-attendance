@@ -45,9 +45,14 @@ cp .env.example .env.local
 
 1. Create a Supabase project.
 2. Run `supabase/migrations/0001_initial_schema.sql`.
-3. Optionally load `supabase/seed.sql` for demo data.
-4. Enable email/password auth.
-5. Add storage buckets for profile photos and exports.
+3. Run `supabase/migrations/0002_operational_workflows.sql`.
+4. Optionally load `supabase/seed.sql` for demo data.
+5. Enable email/password auth.
+6. Add storage buckets for profile photos and exports.
+
+## Backend Workflows
+
+See `BACKEND_WORKFLOWS.md` for API route paths, Supabase function paths, dashboard data flows, and rollout sequencing.
 
 ## Vercel Setup
 

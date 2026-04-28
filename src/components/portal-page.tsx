@@ -3,6 +3,7 @@ import { CalendarDays, CheckCircle2, Download, Plus, Search } from "lucide-react
 import { AlertBanner } from "@/components/alert-banner";
 import { AttendanceCharts } from "@/components/attendance-chart";
 import { AttendanceBadge } from "@/components/attendance-badge";
+import { ApiSurfaceCard, BackendPipeline } from "@/components/backend-pipeline";
 import { DownloadButton } from "@/components/download-button";
 import { MetricCard } from "@/components/metric-card";
 import { ReportTable } from "@/components/report-table";
@@ -255,6 +256,7 @@ function HodDashboard({ metrics }: { metrics: Metric[] }) {
         <ReportTable columns={tableColumns.teachers} rows={tableRows.teachers} />
         <AttendanceCharts />
       </div>
+      <BackendPipeline title="Department Data Pipeline" />
     </div>
   );
 }
@@ -287,6 +289,10 @@ function AdminDashboard({ metrics }: { metrics: Metric[] }) {
             </div>
           </CardContent>
         </Card>
+        <ApiSurfaceCard />
+      </div>
+      <div className="grid gap-6 xl:grid-cols-[1fr_1fr]">
+        <BackendPipeline />
         <Card>
           <CardHeader>
             <CardTitle>Admin Quick Actions</CardTitle>
@@ -397,6 +403,7 @@ function TeacherAttendance() {
           </div>
         </CardContent>
       </Card>
+      <BackendPipeline title="Teacher Session Pipeline" />
       <ReportTable columns={tableColumns.sessions} rows={tableRows.sessions} />
     </div>
   );
