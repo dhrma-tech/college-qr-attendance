@@ -61,19 +61,19 @@ export default function LandingPage() {
     <main className="bg-paper text-ink">
       <LandingNav />
 
-      <section className="bg-ink text-white">
+      <section className="bg-[#EAF8F4] text-ink">
         <div className="mx-auto grid min-h-[calc(100vh-80px)] max-w-7xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[1fr_0.9fr] lg:px-8 lg:py-20">
           <div className="flex flex-col justify-center">
             <Badge className="w-fit bg-citron text-ink ring-citron">Open-source QR attendance</Badge>
-            <h1 className="mt-6 max-w-4xl text-5xl font-normal leading-[0.98] text-white sm:text-7xl">
+            <h1 className="mt-6 max-w-4xl text-5xl font-normal leading-[0.98] text-ink sm:text-7xl">
               Attendance that actually works.
             </h1>
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-white/70">
+            <p className="mt-6 max-w-2xl text-lg leading-8 text-ink/70">
               Students scan a rotating QR from their seat. Teachers see who is present live. Reports, alerts, records - automatic.
             </p>
-            <div className="mt-7 flex flex-wrap gap-3 text-sm font-bold text-white/70">
+            <div className="mt-7 flex flex-wrap gap-3 text-sm font-bold text-ink/70">
               {["< 10 sec mark time", "30s QR rotation", "3-layer anti-proxy"].map((item) => (
-                <span key={item} className="rounded-full border border-white/15 px-4 py-2">
+                <span key={item} className="rounded-full border border-ink/15 bg-white/50 px-4 py-2">
                   {item}
                 </span>
               ))}
@@ -82,7 +82,7 @@ export default function LandingPage() {
               <Button asChild size="lg" className="bg-citron text-ink hover:bg-citron/90">
                 <a href="#how">See How It Works</a>
               </Button>
-              <Button asChild size="lg" variant="outline" className="border-white/20 bg-white/10 text-white hover:bg-white/20">
+              <Button asChild size="lg" variant="outline" className="border-ink/15 bg-white/70 text-ink hover:bg-white">
                 <Link href="/login">
                   Student Login
                   <ArrowRight className="h-5 w-5" />
@@ -92,7 +92,7 @@ export default function LandingPage() {
           </div>
 
           <div className="flex items-center">
-            <div className="w-full rounded-[2rem] border border-white/10 bg-white/8 p-4 shadow-qr backdrop-blur">
+            <div className="w-full rounded-[2rem] border border-teal/15 bg-white/45 p-4 shadow-qr backdrop-blur">
               <div className="rounded-[1.5rem] bg-paper p-5 text-ink">
                 <div className="flex items-center justify-between">
                   <div className="flex gap-1.5">
@@ -118,7 +118,7 @@ export default function LandingPage() {
                     <span>Refreshes</span>
                     <span>18s</span>
                   </div>
-                  <div className="h-2 overflow-hidden rounded-full bg-ink/10">
+                  <div className="h-2 overflow-hidden rounded-full bg-[#EAF8F4]">
                     <div className="h-full w-[62%] rounded-full bg-teal" />
                   </div>
                 </div>
@@ -165,7 +165,7 @@ export default function LandingPage() {
           ].map((flow) => (
             <Card key={flow.label} className="border-ink/10 bg-white">
               <CardContent className="p-6">
-                <span className="rounded-full bg-ink px-4 py-2 text-sm font-black text-white">{flow.label}</span>
+                <span className="rounded-full border border-teal/15 bg-[#EAF8F4] px-4 py-2 text-sm font-black text-ink">{flow.label}</span>
                 <div className="mt-7 space-y-4">
                   {[
                     { icon: flow.iconA, text: flow.a },
@@ -234,11 +234,11 @@ export default function LandingPage() {
                   <p className="mt-4 text-4xl font-black text-ink">{portal.value}</p>
                   <p className="mt-1 text-sm font-semibold text-ink/55">{portal.detail}</p>
                   <div className="mt-6 space-y-2">
-                    <div className="h-2 rounded-full bg-ink/10">
+                    <div className="h-2 rounded-full bg-[#EAF8F4]">
                       <div className={`h-full w-3/4 rounded-full ${portal.tone}`} />
                     </div>
-                    <div className="h-2 w-2/3 rounded-full bg-ink/10" />
-                    <div className="h-2 w-1/2 rounded-full bg-ink/10" />
+                    <div className="h-2 w-2/3 rounded-full bg-[#EAF8F4]" />
+                    <div className="h-2 w-1/2 rounded-full bg-[#EAF8F4]" />
                   </div>
                 </div>
               </CardContent>
@@ -254,7 +254,7 @@ export default function LandingPage() {
           <div className="mt-10 grid gap-3 md:grid-cols-5">
             {["College config", "Departments", "Teachers", "Students", "Start session"].map((step, index) => (
               <div key={step} className="rounded-xl border border-ink/10 bg-paper p-5">
-                <span className="grid h-9 w-9 place-items-center rounded-full bg-ink text-sm font-black text-white">{index + 1}</span>
+                <span className="grid h-9 w-9 place-items-center rounded-full border border-teal/15 bg-[#EAF8F4] text-sm font-black text-ink">{index + 1}</span>
                 <p className="mt-5 text-sm font-black text-ink">{step}</p>
                 <p className="mt-2 text-xs font-semibold leading-5 text-ink/50">Admin-guided setup keeps one-college deployment simple.</p>
               </div>
@@ -264,11 +264,11 @@ export default function LandingPage() {
       </section>
 
       <section id="staff" className="mx-auto grid max-w-7xl gap-4 px-4 py-16 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:px-8">
-        <Card className="border-ink bg-ink text-white">
+        <Card className="border-teal/15 bg-[#EAF8F4] text-ink">
           <CardContent className="p-8">
-            <p className="text-sm font-black uppercase tracking-wide text-citron">Teacher portal</p>
-            <h2 className="mt-4 text-4xl font-normal text-white">Built for how teachers actually teach.</h2>
-            <ul className="mt-8 space-y-4 text-sm font-bold text-white/70">
+            <p className="text-sm font-black uppercase tracking-wide text-teal">Teacher portal</p>
+            <h2 className="mt-4 text-4xl font-normal text-ink">Built for how teachers actually teach.</h2>
+            <ul className="mt-8 space-y-4 text-sm font-bold text-ink/70">
               <li>Start a session in 2 taps</li>
               <li>QR displays full-screen for projectors</li>
               <li>Override any record with audit trail</li>
@@ -312,7 +312,7 @@ export default function LandingPage() {
               </div>
             ))}
           </div>
-          <Button asChild className="mt-8 bg-ink text-white hover:bg-ink/90">
+          <Button asChild className="mt-8 border border-teal/15 bg-[#EAF8F4] text-ink hover:bg-[#dff4ef]">
             <Link href="https://github.com/dhrma-tech/college-qr-attendance">
               View on GitHub
               <Github className="h-4 w-4" />
@@ -321,23 +321,23 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section className="bg-ink px-4 py-16 text-center text-white sm:px-6 lg:px-8">
+      <section className="bg-[#EAF8F4] px-4 py-16 text-center text-ink sm:px-6 lg:px-8">
         <h2 className="text-4xl font-normal sm:text-5xl">Ready to end proxy attendance?</h2>
-        <p className="mt-4 text-white/60">Set up in minutes. Free for any college.</p>
+        <p className="mt-4 text-ink/60">Set up in minutes. Free for any college.</p>
         <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
           <Button asChild className="bg-citron text-ink hover:bg-citron/90">
             <Link href="/login">Get Started</Link>
           </Button>
-          <Button asChild variant="outline" className="border-white/20 bg-white/10 text-white hover:bg-white/20">
+          <Button asChild variant="outline" className="border-ink/15 bg-white/70 text-ink hover:bg-white">
             <Link href="https://github.com/dhrma-tech/college-qr-attendance/blob/codex/ai-platform-rebuild/SETUP.md">Read the docs</Link>
           </Button>
         </div>
       </section>
 
-      <footer className="bg-ink px-4 pb-10 text-white/60 sm:px-6 lg:px-8">
-        <div className="mx-auto grid max-w-7xl gap-8 border-t border-white/10 pt-10 md:grid-cols-[1fr_1fr]">
+      <footer className="bg-[#EAF8F4] px-4 pb-10 text-ink/60 sm:px-6 lg:px-8">
+        <div className="mx-auto grid max-w-7xl gap-8 border-t border-ink/10 pt-10 md:grid-cols-[1fr_1fr]">
           <div>
-            <BrandMark inverse />
+            <BrandMark />
             <p className="mt-4 max-w-md text-sm">Smart QR attendance for one college, with clean portals for students, teachers, HODs, and admins.</p>
             <p className="mt-5 text-xs">MIT License. Copyright 2026 {collegeConfig.name}.</p>
           </div>

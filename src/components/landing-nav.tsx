@@ -65,7 +65,7 @@ export function LandingNav() {
       </div>
 
       {open && (
-        <div className="fixed inset-0 z-50 bg-ink/35 backdrop-blur-sm md:hidden">
+        <div className="fixed inset-0 z-50 bg-[#EAF8F4]/85 backdrop-blur-sm md:hidden">
           <div className="ml-auto flex h-full w-[min(88vw,380px)] flex-col bg-paper p-5 shadow-soft">
             <div className="flex items-center justify-between">
               <BrandMark />

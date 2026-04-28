@@ -72,7 +72,7 @@ export default function Page({ params }: { params: { token: string } }) {
               Expired QR tokens cannot be reused.
             </div>
           )}
-          <Button asChild className="mt-7 w-full bg-ink text-white hover:bg-ink/90">
+          <Button asChild className="mt-7 w-full border border-teal/15 bg-[#EAF8F4] text-ink hover:bg-[#dff4ef]">
             <Link href={state.href}>{state.action}</Link>
           </Button>
         </CardContent>

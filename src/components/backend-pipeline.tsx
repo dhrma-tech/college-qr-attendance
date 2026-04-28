@@ -68,8 +68,8 @@ export function ApiSurfaceCard() {
       </CardHeader>
       <CardContent className="space-y-3">
         {apiWorkflowPaths.map((endpoint) => (
-          <div key={endpoint.path} className="flex items-center gap-3 rounded-xl bg-ink px-4 py-3 font-mono text-xs font-black text-white">
-            <Route className="h-4 w-4 text-citron" />
+          <div key={endpoint.path} className="flex items-center gap-3 rounded-xl border border-teal/15 bg-[#EAF8F4] px-4 py-3 font-mono text-xs font-black text-ink">
+            <Route className="h-4 w-4 text-teal" />
             {endpoint.method} {endpoint.path}
           </div>
         ))}

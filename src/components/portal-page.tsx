@@ -87,18 +87,18 @@ function StudentDashboard() {
 
   return (
     <div className="space-y-6">
-      <Card className="border-ink bg-ink text-white">
+      <Card className="border-teal/15 bg-[#EAF8F4] text-ink">
         <CardContent className="grid gap-6 p-6 lg:grid-cols-[1fr_0.7fr]">
           <div>
-            <p className="text-sm font-black uppercase tracking-wide text-citron">Good morning, Aarav.</p>
-            <h2 className="mt-4 text-5xl font-normal text-white">82%</h2>
-            <p className="mt-3 text-sm font-semibold text-white/60">overall this semester</p>
-            <p className="mt-6 text-sm font-bold text-white/70">6 subjects enrolled - 64 present - 14 absent</p>
+            <p className="text-sm font-black uppercase tracking-wide text-teal">Good morning, Aarav.</p>
+            <h2 className="mt-4 text-5xl font-normal text-ink">82%</h2>
+            <p className="mt-3 text-sm font-semibold text-ink/60">overall this semester</p>
+            <p className="mt-6 text-sm font-bold text-ink/70">6 subjects enrolled - 64 present - 14 absent</p>
           </div>
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
-            <p className="text-sm font-black text-white">Next class</p>
-            <p className="mt-3 text-2xl font-black text-citron">Physics</p>
-            <p className="mt-1 text-sm font-semibold text-white/60">11:00 AM - Lab 3</p>
+          <div className="rounded-2xl border border-teal/15 bg-white/65 p-5">
+            <p className="text-sm font-black text-ink">Next class</p>
+            <p className="mt-3 text-2xl font-black text-teal">Physics</p>
+            <p className="mt-1 text-sm font-semibold text-ink/60">11:00 AM - Lab 3</p>
             <Badge className="mt-5 bg-teal text-white ring-teal">Live scan opens soon</Badge>
           </div>
         </CardContent>
@@ -153,7 +153,7 @@ function StudentAttendancePage() {
                         ? "bg-late/12 text-late"
                         : status === "absent"
                           ? "bg-absent/12 text-absent"
-                          : "bg-ink/5 text-ink/30"
+                          : "bg-[#EAF8F4] text-ink/30"
                   }`}
                 >
                   {index + 1}
@@ -220,14 +220,14 @@ function HodDashboard({ metrics }: { metrics: Metric[] }) {
     <div className="space-y-6">
       <MetricGrid metrics={metrics} />
       <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
-        <Card className="border-ink bg-ink text-white">
+        <Card className="border-teal/15 bg-[#EAF8F4] text-ink">
           <CardContent className="p-6">
-            <p className="text-sm font-black uppercase tracking-wide text-citron">Department health</p>
-            <h2 className="mt-4 text-5xl font-normal text-white">81%</h2>
-            <p className="mt-2 text-sm font-semibold text-white/60">Computer Science average this semester</p>
+            <p className="text-sm font-black uppercase tracking-wide text-teal">Department health</p>
+            <h2 className="mt-4 text-5xl font-normal text-ink">81%</h2>
+            <p className="mt-2 text-sm font-semibold text-ink/60">Computer Science average this semester</p>
             <div className="mt-7 grid gap-3 sm:grid-cols-3">
               {["24 teachers", "5 live sessions", "37 at risk"].map((item) => (
-                <div key={item} className="rounded-xl border border-white/10 bg-white/5 p-4 text-sm font-black text-white/75">
+                <div key={item} className="rounded-xl border border-teal/15 bg-white/65 p-4 text-sm font-black text-ink/75">
                   {item}
                 </div>
               ))}
@@ -275,16 +275,16 @@ function AdminDashboard({ metrics }: { metrics: Metric[] }) {
     <div className="space-y-6">
       <MetricGrid metrics={metrics} />
       <div className="grid gap-6 xl:grid-cols-[0.85fr_1.15fr]">
-        <Card className="border-ink bg-ink text-white">
+        <Card className="border-teal/15 bg-[#EAF8F4] text-ink">
           <CardContent className="p-6">
-            <p className="text-sm font-black uppercase tracking-wide text-citron">Setup progress</p>
-            <h2 className="mt-4 text-5xl font-normal text-white">60%</h2>
-            <p className="mt-2 text-sm font-semibold text-white/60">Complete the remaining steps before first rollout.</p>
+            <p className="text-sm font-black uppercase tracking-wide text-teal">Setup progress</p>
+            <h2 className="mt-4 text-5xl font-normal text-ink">60%</h2>
+            <p className="mt-2 text-sm font-semibold text-ink/60">Complete the remaining steps before first rollout.</p>
             <div className="mt-7 space-y-3">
               {setup.map((item) => (
-                <div key={item.label} className="flex items-center justify-between rounded-xl border border-white/10 bg-white/5 p-3 text-sm font-black">
+                <div key={item.label} className="flex items-center justify-between rounded-xl border border-teal/15 bg-white/65 p-3 text-sm font-black">
                   <span>{item.label}</span>
-                  <span className={item.done ? "text-citron" : "text-white/35"}>{item.done ? "Done" : "Pending"}</span>
+                  <span className={item.done ? "text-teal" : "text-ink/35"}>{item.done ? "Done" : "Pending"}</span>
                 </div>
               ))}
             </div>
@@ -379,7 +379,7 @@ function TeacherAttendance() {
             <div className="mt-7 grid gap-3">
               {["Select subject and section", "Confirm classroom location", "Project QR and watch live count"].map((step, index) => (
                 <div key={step} className="flex items-center gap-3 rounded-xl border border-ink/10 bg-paper p-3 text-sm font-black text-ink/70">
-                  <span className="grid h-7 w-7 place-items-center rounded-full bg-ink text-xs text-white">{index + 1}</span>
+                  <span className="grid h-7 w-7 place-items-center rounded-full border border-teal/15 bg-[#EAF8F4] text-xs text-ink">{index + 1}</span>
                   {step}
                 </div>
               ))}

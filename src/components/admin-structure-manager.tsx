@@ -23,20 +23,20 @@ const mappingGroups = [
 export function AdminStructureManager() {
   return (
     <div className="space-y-6">
-      <Card className="border-ink bg-ink text-white">
+      <Card className="border-teal/15 bg-[#EAF8F4] text-ink">
         <CardContent className="grid gap-4 p-6 lg:grid-cols-[1fr_1fr]">
           <div>
-            <p className="text-sm font-black uppercase tracking-wide text-citron">Account approval data</p>
-            <h2 className="mt-3 text-4xl font-normal text-white">Configure the college structure before approving users.</h2>
-            <p className="mt-3 text-sm font-semibold leading-6 text-white/60">
+            <p className="text-sm font-black uppercase tracking-wide text-teal">Account approval data</p>
+            <h2 className="mt-3 text-4xl font-normal text-ink">Configure the college structure before approving users.</h2>
+            <p className="mt-3 text-sm font-semibold leading-6 text-ink/60">
               Signup requests should be mapped to departments, branches, classes, subjects, timetable slots, and attendance rules before activation.
             </p>
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
-            <Input placeholder="College name" className="border-white/15 bg-white text-ink" />
-            <Input placeholder="Current academic year" className="border-white/15 bg-white text-ink" />
-            <Input placeholder="Lecture duration minutes" className="border-white/15 bg-white text-ink" />
-            <Input placeholder="QR expiry seconds" className="border-white/15 bg-white text-ink" />
+            <Input placeholder="College name" className="border-teal/15 bg-white text-ink" />
+            <Input placeholder="Current academic year" className="border-teal/15 bg-white text-ink" />
+            <Input placeholder="Lecture duration minutes" className="border-teal/15 bg-white text-ink" />
+            <Input placeholder="QR expiry seconds" className="border-teal/15 bg-white text-ink" />
           </div>
         </CardContent>
       </Card>

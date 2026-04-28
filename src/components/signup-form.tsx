@@ -115,18 +115,18 @@ export function SignupForm({ role }: { role: SignupRole }) {
 
         <Card className="overflow-hidden border-ink/10 shadow-soft">
           <CardContent className="grid p-0 lg:grid-cols-[0.78fr_1.22fr]">
-            <aside className="bg-ink p-8 text-white sm:p-10">
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-citron text-ink">
+            <aside className="bg-[#EAF8F4] p-8 text-ink sm:p-10">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-teal text-white">
                 <UserPlus className="h-7 w-7" />
               </div>
-              <h1 className="mt-8 text-5xl font-normal leading-tight text-white">{copy.title}</h1>
-              <p className="mt-5 text-sm font-semibold leading-7 text-white/60">{copy.subtitle}</p>
-              <div className="mt-8 rounded-2xl border border-white/10 bg-white/5 p-5">
+              <h1 className="mt-8 text-5xl font-normal leading-tight text-ink">{copy.title}</h1>
+              <p className="mt-5 text-sm font-semibold leading-7 text-ink/60">{copy.subtitle}</p>
+              <div className="mt-8 rounded-2xl border border-teal/15 bg-white/65 p-5">
                 <div className="flex gap-3">
-                  <ShieldCheck className="h-5 w-5 text-citron" />
+                  <ShieldCheck className="h-5 w-5 text-teal" />
                   <div>
                     <p className="font-black">Admin approval required</p>
-                    <p className="mt-1 text-sm font-semibold leading-6 text-white/55">
+                    <p className="mt-1 text-sm font-semibold leading-6 text-ink/55">
                       Signup requests create pending profiles. Admin verifies identity, class mapping, and department assignment before activation.
                     </p>
                   </div>

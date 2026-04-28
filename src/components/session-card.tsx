@@ -31,7 +31,7 @@ export function SessionCard({
             <h3 className="mt-4 font-black text-ink">{subject}</h3>
             <p className="mt-1 text-sm font-semibold text-ink/55">{teacher}</p>
           </div>
-          <Link href={href} className="rounded-full bg-ink p-2 text-white" aria-label={`View ${subject}`}>
+          <Link href={href} className="rounded-full border border-teal/15 bg-[#EAF8F4] p-2 text-ink" aria-label={`View ${subject}`}>
             <ArrowRight className="h-4 w-4" />
           </Link>
         </div>

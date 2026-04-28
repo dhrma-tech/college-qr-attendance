@@ -25,13 +25,13 @@ export function QrCodePanel({ token }: { token: string }) {
   }, [token]);
 
   return (
-    <div className="min-h-screen bg-ink text-white">
-      <header className="flex items-center justify-between border-b border-white/10 px-5 py-4">
+    <div className="min-h-screen bg-[#EAF8F4] text-ink">
+      <header className="flex items-center justify-between border-b border-ink/10 px-5 py-4">
         <div>
           <h1 className="text-lg font-black">Mathematics - Section A</h1>
-          <p className="text-xs font-semibold text-white/50">Prof. Mehta - Tue 28 Apr - Room 201</p>
+          <p className="text-xs font-semibold text-ink/50">Prof. Mehta - Tue 28 Apr - Room 201</p>
         </div>
-        <p className="font-mono text-sm font-black text-citron">00:18:42</p>
+        <p className="font-mono text-sm font-black text-teal">00:18:42</p>
       </header>
 
       <main className="grid min-h-[calc(100vh-148px)] place-items-center px-5 py-8">
@@ -54,15 +54,15 @@ export function QrCodePanel({ token }: { token: string }) {
 
           <div className="mx-auto mt-6 flex max-w-md items-center justify-center gap-1">
             {Array.from({ length: 16 }).map((_, index) => (
-              <span key={index} className={`h-2 flex-1 rounded-full ${index < 9 ? "bg-citron" : "bg-white/15"}`} />
+              <span key={index} className={`h-2 flex-1 rounded-full ${index < 9 ? "bg-teal" : "bg-white/70"}`} />
             ))}
           </div>
-          <p className="mt-2 text-sm font-black text-white/60">Refreshes in 18s</p>
-          <p className="mt-8 text-4xl font-black text-citron">38 / 48 students present</p>
+          <p className="mt-2 text-sm font-black text-ink/60">Refreshes in 18s</p>
+          <p className="mt-8 text-4xl font-black text-teal">38 / 48 students present</p>
         </div>
       </main>
 
-      <section className="border-t border-white/10 bg-white px-5 py-4 text-ink">
+      <section className="border-t border-ink/10 bg-white px-5 py-4 text-ink">
         <div className="mx-auto flex max-w-5xl flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <Button variant="outline" className="border-ink/15">
             <ChevronUp className="h-4 w-4" />
