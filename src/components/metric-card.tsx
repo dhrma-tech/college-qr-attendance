@@ -12,14 +12,14 @@ const toneMap = {
 
 export function MetricCard({ metric }: { metric: Metric }) {
   return (
-    <Card>
+    <Card className="border-ink/10">
       <CardContent className="p-5">
         <div className="flex items-start justify-between gap-3">
-          <p className="text-sm font-medium text-slate-500">{metric.label}</p>
+          <p className="text-sm font-black text-ink/50">{metric.label}</p>
           <Badge tone={toneMap[metric.tone || "neutral"]}>{metric.tone || "live"}</Badge>
         </div>
-        <div className="mt-4 text-3xl font-bold text-slate-950">{metric.value}</div>
-        <p className="mt-2 text-sm text-slate-500">{metric.detail}</p>
+        <div className="mt-4 text-3xl font-black text-ink">{metric.value}</div>
+        <p className="mt-2 text-sm font-semibold text-ink/50">{metric.detail}</p>
       </CardContent>
     </Card>
   );

@@ -3,17 +3,18 @@
 import Link from "next/link";
 import { QrCode } from "lucide-react";
 import { collegeConfig } from "../../college.config";
+import { cn } from "@/lib/utils";
 
-export function BrandMark({ compact = false }: { compact?: boolean }) {
+export function BrandMark({ compact = false, inverse = false }: { compact?: boolean; inverse?: boolean }) {
   return (
     <Link href="/" className="flex items-center gap-3">
-      <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary text-white shadow-sm">
+      <span className={cn("flex h-11 w-11 items-center justify-center rounded-xl shadow-sm", inverse ? "bg-citron text-ink" : "bg-teal text-white")}>
         <QrCode className="h-6 w-6" />
       </span>
       {!compact && (
         <span className="leading-tight">
-          <span className="block text-sm font-bold text-slate-950">{collegeConfig.name}</span>
-          <span className="block text-xs font-medium text-slate-500">QR Attendance</span>
+          <span className={cn("block text-sm font-black", inverse ? "text-white" : "text-ink")}>{collegeConfig.name}</span>
+          <span className={cn("block text-xs font-bold", inverse ? "text-white/55" : "text-ink/50")}>QR Attendance</span>
         </span>
       )}
     </Link>

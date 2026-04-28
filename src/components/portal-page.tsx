@@ -1,7 +1,11 @@
 import { CalendarDays, CheckCircle2, Download, Plus, Search } from "lucide-react";
+import { AlertBanner } from "@/components/alert-banner";
 import { AttendanceCharts } from "@/components/attendance-chart";
+import { AttendanceBadge } from "@/components/attendance-badge";
+import { DownloadButton } from "@/components/download-button";
 import { MetricCard } from "@/components/metric-card";
 import { ReportTable } from "@/components/report-table";
+import { SessionCard } from "@/components/session-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -18,6 +22,8 @@ type PortalPageProps = {
 export function PortalPage({ role, mode }: PortalPageProps) {
   const metrics = dashboardMetrics[role] || dashboardMetrics.student;
 
+  if (role === "student" && mode === "dashboard") return <StudentDashboard />;
+  if (role === "teacher" && mode === "dashboard") return <TeacherDashboard metrics={metrics} />;
   if (mode === "attendance" && role === "teacher") return <TeacherAttendance />;
   if (mode === "subjects" && role === "student") return <SubjectBreakdown />;
   if (mode === "profile") return <ProfilePanel role={role} />;
@@ -70,6 +76,88 @@ export function PortalPage({ role, mode }: PortalPageProps) {
   );
 }
 
+function StudentDashboard() {
+  const atRisk = subjectCards.filter((subject) => subject.percent < 75).map((subject) => ({ name: subject.subject, percentage: subject.percent }));
+
+  return (
+    <div className="space-y-6">
+      <Card className="border-ink bg-ink text-white">
+        <CardContent className="grid gap-6 p-6 lg:grid-cols-[1fr_0.7fr]">
+          <div>
+            <p className="text-sm font-black uppercase tracking-wide text-citron">Good morning, Aarav.</p>
+            <h2 className="mt-4 text-5xl font-normal text-white">82%</h2>
+            <p className="mt-3 text-sm font-semibold text-white/60">overall this semester</p>
+            <p className="mt-6 text-sm font-bold text-white/70">6 subjects enrolled - 64 present - 14 absent</p>
+          </div>
+          <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
+            <p className="text-sm font-black text-white">Next class</p>
+            <p className="mt-3 text-2xl font-black text-citron">Physics</p>
+            <p className="mt-1 text-sm font-semibold text-white/60">11:00 AM - Lab 3</p>
+            <Badge className="mt-5 bg-teal text-white ring-teal">Live scan opens soon</Badge>
+          </div>
+        </CardContent>
+      </Card>
+      <AlertBanner subjects={atRisk} />
+      <MetricGrid metrics={dashboardMetrics.student} />
+      <div className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
+        <AttendanceCharts />
+        <Card>
+          <CardHeader>
+            <CardTitle>Today&apos;s Schedule</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ReportTable columns={tableColumns.schedule} rows={tableRows.schedule} />
+          </CardContent>
+        </Card>
+      </div>
+      <SubjectBreakdown />
+    </div>
+  );
+}
+
+function TeacherDashboard({ metrics }: { metrics: Metric[] }) {
+  return (
+    <div className="space-y-6">
+      <MetricGrid metrics={metrics} />
+      <div className="grid gap-4 lg:grid-cols-3">
+        <SessionCard subject="Operating Systems" teacher="Prof. Arjun Rao" present={38} total={48} />
+        <SessionCard subject="Database Management" teacher="Dr. Priya Menon" present={51} total={58} />
+        <SessionCard subject="Web Engineering" teacher="Ms. Sana Iqbal" present={46} total={52} />
+      </div>
+      <div className="grid gap-6 xl:grid-cols-[1.25fr_0.75fr]">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle>Recent Sessions</CardTitle>
+            <Button size="sm" variant="outline">
+              <CalendarDays className="h-4 w-4" />
+              Today
+            </Button>
+          </CardHeader>
+          <CardContent>
+            <ReportTable columns={tableColumns.sessions} rows={tableRows.sessions} />
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Action Center</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {alerts.map((alert) => (
+              <div key={alert.title} className="flex gap-3 rounded-xl border border-ink/10 p-4">
+                <alert.icon className="mt-0.5 h-5 w-5 text-teal" />
+                <div>
+                  <p className="font-black text-ink">{alert.title}</p>
+                  <p className="text-sm font-semibold text-ink/55">{alert.detail}</p>
+                </div>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}
+
 function MetricGrid({ metrics }: { metrics: Metric[] }) {
   return (
     <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -91,7 +179,7 @@ function SubjectBreakdown() {
                 <h2 className="font-bold text-slate-950">{item.subject}</h2>
                 <p className="mt-1 text-sm text-slate-500">{item.teacher}</p>
               </div>
-              <Badge tone={item.percent >= 75 ? "success" : item.percent >= 60 ? "warning" : "danger"}>{item.status}</Badge>
+              <AttendanceBadge percentage={item.percent} />
             </div>
             <div className="mt-8 text-4xl font-bold text-slate-950">{item.percent}%</div>
             <Progress value={item.percent} className="mt-4" />
@@ -180,10 +268,7 @@ function ReportsPanel({ role }: { role: string }) {
             <h2 className="text-xl font-bold text-slate-950">{role === "hod" ? "Department Report Builder" : "Attendance Reports"}</h2>
             <p className="text-sm text-slate-500">Filter by academic year, subject, teacher, section, and date range.</p>
           </div>
-          <Button>
-            <Download className="h-4 w-4" />
-            Export PDF
-          </Button>
+          <DownloadButton label="Export PDF" />
         </CardContent>
       </Card>
       <AttendanceCharts />
