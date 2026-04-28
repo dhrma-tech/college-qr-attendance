@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { CalendarDays, CheckCircle2, Download, Plus, Search } from "lucide-react";
 import { AlertBanner } from "@/components/alert-banner";
 import { AttendanceCharts } from "@/components/attendance-chart";
@@ -23,7 +24,10 @@ export function PortalPage({ role, mode }: PortalPageProps) {
   const metrics = dashboardMetrics[role] || dashboardMetrics.student;
 
   if (role === "student" && mode === "dashboard") return <StudentDashboard />;
+  if (role === "student" && mode === "attendance") return <StudentAttendancePage />;
   if (role === "teacher" && mode === "dashboard") return <TeacherDashboard metrics={metrics} />;
+  if (role === "hod" && mode === "dashboard") return <HodDashboard metrics={metrics} />;
+  if (role === "admin" && mode === "dashboard") return <AdminDashboard metrics={metrics} />;
   if (mode === "attendance" && role === "teacher") return <TeacherAttendance />;
   if (mode === "subjects" && role === "student") return <SubjectBreakdown />;
   if (mode === "profile") return <ProfilePanel role={role} />;
@@ -115,6 +119,57 @@ function StudentDashboard() {
   );
 }
 
+function StudentAttendancePage() {
+  return (
+    <div className="space-y-6">
+      <Card className="border-ink/10">
+        <CardContent className="flex flex-col gap-4 p-5 lg:flex-row lg:items-center lg:justify-between">
+          <div>
+            <p className="text-sm font-black uppercase tracking-wide text-teal">My attendance</p>
+            <h2 className="mt-2 text-3xl font-normal text-ink">Semester summary and subject risk</h2>
+            <p className="mt-2 text-sm font-semibold text-ink/55">Filter by semester, export parent-ready reports, and inspect every session.</p>
+          </div>
+          <DownloadButton label="Download certificate" />
+        </CardContent>
+      </Card>
+      <SubjectBreakdown />
+      <Card>
+        <CardHeader>
+          <CardTitle>Session Calendar</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-7 gap-2">
+            {Array.from({ length: 35 }).map((_, index) => {
+              const status = index % 11 === 0 ? "absent" : index % 7 === 0 ? "late" : index % 5 === 0 ? "empty" : "present";
+              return (
+                <div
+                  key={index}
+                  className={`grid aspect-square place-items-center rounded-lg text-xs font-black ${
+                    status === "present"
+                      ? "bg-present/12 text-present"
+                      : status === "late"
+                        ? "bg-late/12 text-late"
+                        : status === "absent"
+                          ? "bg-absent/12 text-absent"
+                          : "bg-ink/5 text-ink/30"
+                  }`}
+                >
+                  {index + 1}
+                </div>
+              );
+            })}
+          </div>
+          <div className="mt-4 flex flex-wrap gap-3 text-xs font-black text-ink/55">
+            <span>Green: present</span>
+            <span>Orange: late</span>
+            <span>Red: absent</span>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
 function TeacherDashboard({ metrics }: { metrics: Metric[] }) {
   return (
     <div className="space-y-6">
@@ -154,6 +209,103 @@ function TeacherDashboard({ metrics }: { metrics: Metric[] }) {
           </CardContent>
         </Card>
       </div>
+    </div>
+  );
+}
+
+function HodDashboard({ metrics }: { metrics: Metric[] }) {
+  return (
+    <div className="space-y-6">
+      <MetricGrid metrics={metrics} />
+      <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
+        <Card className="border-ink bg-ink text-white">
+          <CardContent className="p-6">
+            <p className="text-sm font-black uppercase tracking-wide text-citron">Department health</p>
+            <h2 className="mt-4 text-5xl font-normal text-white">81%</h2>
+            <p className="mt-2 text-sm font-semibold text-white/60">Computer Science average this semester</p>
+            <div className="mt-7 grid gap-3 sm:grid-cols-3">
+              {["24 teachers", "5 live sessions", "37 at risk"].map((item) => (
+                <div key={item} className="rounded-xl border border-white/10 bg-white/5 p-4 text-sm font-black text-white/75">
+                  {item}
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Low Attendance Alerts</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {subjectCards.filter((item) => item.percent < 75).map((item) => (
+              <div key={item.subject} className="rounded-xl border border-coral/20 bg-coral/10 p-4">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <p className="font-black text-ink">{item.subject}</p>
+                    <p className="text-sm font-semibold text-ink/55">{item.teacher}</p>
+                  </div>
+                  <AttendanceBadge percentage={item.percent} />
+                </div>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      </div>
+      <div className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
+        <ReportTable columns={tableColumns.teachers} rows={tableRows.teachers} />
+        <AttendanceCharts />
+      </div>
+    </div>
+  );
+}
+
+function AdminDashboard({ metrics }: { metrics: Metric[] }) {
+  const setup = [
+    { label: "College config", done: true },
+    { label: "Departments", done: true },
+    { label: "Teacher import", done: true },
+    { label: "Student import", done: false },
+    { label: "Timetable", done: false }
+  ];
+
+  return (
+    <div className="space-y-6">
+      <MetricGrid metrics={metrics} />
+      <div className="grid gap-6 xl:grid-cols-[0.85fr_1.15fr]">
+        <Card className="border-ink bg-ink text-white">
+          <CardContent className="p-6">
+            <p className="text-sm font-black uppercase tracking-wide text-citron">Setup progress</p>
+            <h2 className="mt-4 text-5xl font-normal text-white">60%</h2>
+            <p className="mt-2 text-sm font-semibold text-white/60">Complete the remaining steps before first rollout.</p>
+            <div className="mt-7 space-y-3">
+              {setup.map((item) => (
+                <div key={item.label} className="flex items-center justify-between rounded-xl border border-white/10 bg-white/5 p-3 text-sm font-black">
+                  <span>{item.label}</span>
+                  <span className={item.done ? "text-citron" : "text-white/35"}>{item.done ? "Done" : "Pending"}</span>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Admin Quick Actions</CardTitle>
+          </CardHeader>
+          <CardContent className="grid gap-3 sm:grid-cols-2">
+            {[
+              { label: "Configure college", href: "/admin/config" },
+              { label: "Add departments", href: "/admin/departments" },
+              { label: "Import teachers", href: "/admin/teachers" },
+              { label: "Import students", href: "/admin/students" }
+            ].map((action) => (
+              <Button key={action.href} asChild variant="outline" className="h-14 justify-start border-ink/10">
+                <Link href={action.href}>{action.label}</Link>
+              </Button>
+            ))}
+          </CardContent>
+        </Card>
+      </div>
+      <ReportTable columns={tableColumns.logs} rows={tableRows.logs} />
     </div>
   );
 }
@@ -208,10 +360,23 @@ function TeacherAttendance() {
               <Input placeholder="Subject: DBMS" />
               <Input placeholder="Section: CSE 5A" />
             </div>
-            <Button className="mt-5">
-              <Plus className="h-4 w-4" />
-              Start Session
-            </Button>
+            <div className="mt-5 flex flex-col gap-3 sm:flex-row">
+              <Button asChild>
+                <Link href="/teacher/attendance/demo-session">
+                  <Plus className="h-4 w-4" />
+                  Start Session
+                </Link>
+              </Button>
+              <Button variant="outline">Use timetable slot</Button>
+            </div>
+            <div className="mt-7 grid gap-3">
+              {["Select subject and section", "Confirm classroom location", "Project QR and watch live count"].map((step, index) => (
+                <div key={step} className="flex items-center gap-3 rounded-xl border border-ink/10 bg-paper p-3 text-sm font-black text-ink/70">
+                  <span className="grid h-7 w-7 place-items-center rounded-full bg-ink text-xs text-white">{index + 1}</span>
+                  {step}
+                </div>
+              ))}
+            </div>
           </div>
           <div className="rounded-2xl bg-slate-950 p-6 text-white">
             <div className="flex items-center justify-between">

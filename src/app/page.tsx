@@ -17,6 +17,7 @@ import {
   Zap
 } from "lucide-react";
 import { BrandMark } from "@/components/brand-mark";
+import { LandingNav } from "@/components/landing-nav";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -58,22 +59,7 @@ const featureCards = [
 export default function LandingPage() {
   return (
     <main className="bg-paper text-ink">
-      <header className="sticky top-0 z-30 border-b border-ink/10 bg-paper/90 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-          <BrandMark />
-          <nav className="hidden items-center gap-8 text-sm font-bold text-ink/70 md:flex">
-            <a href="#how">How It Works</a>
-            <a href="#features">Features</a>
-            <a href="#staff">For Staff</a>
-          </nav>
-          <Button asChild className="bg-teal hover:bg-teal/90">
-            <Link href="/login">
-              Student Login
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-          </Button>
-        </div>
-      </header>
+      <LandingNav />
 
       <section className="bg-ink text-white">
         <div className="mx-auto grid min-h-[calc(100vh-80px)] max-w-7xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[1fr_0.9fr] lg:px-8 lg:py-20">
@@ -218,6 +204,60 @@ export default function LandingPage() {
                   <p className="mt-3 text-sm font-semibold leading-6 text-ink/55">{feature.copy}</p>
                 </CardContent>
               </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="portals" className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+        <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
+          <div>
+            <p className="text-sm font-black uppercase tracking-wide text-teal">Portal previews</p>
+            <h2 className="mt-3 text-4xl font-normal text-ink sm:text-5xl">Every role gets the right screen.</h2>
+          </div>
+          <p className="max-w-md text-sm font-semibold leading-6 text-ink/55">
+            Students need fast clarity. Teachers need live control. HOD and admin teams need calm oversight.
+          </p>
+        </div>
+        <div className="mt-10 grid gap-4 lg:grid-cols-4">
+          {[
+            { title: "Student", value: "82%", detail: "Overall attendance", tone: "bg-present" },
+            { title: "Teacher", value: "38/48", detail: "Live session count", tone: "bg-teal" },
+            { title: "HOD", value: "37", detail: "At-risk students", tone: "bg-coral" },
+            { title: "Admin", value: "92%", detail: "Setup complete", tone: "bg-amber" }
+          ].map((portal) => (
+            <Card key={portal.title} className="overflow-hidden border-ink/10 bg-white">
+              <CardContent className="p-0">
+                <div className={`${portal.tone} h-2`} />
+                <div className="p-5">
+                  <p className="text-sm font-black uppercase tracking-wide text-ink/45">{portal.title}</p>
+                  <p className="mt-4 text-4xl font-black text-ink">{portal.value}</p>
+                  <p className="mt-1 text-sm font-semibold text-ink/55">{portal.detail}</p>
+                  <div className="mt-6 space-y-2">
+                    <div className="h-2 rounded-full bg-ink/10">
+                      <div className={`h-full w-3/4 rounded-full ${portal.tone}`} />
+                    </div>
+                    <div className="h-2 w-2/3 rounded-full bg-ink/10" />
+                    <div className="h-2 w-1/2 rounded-full bg-ink/10" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </section>
+
+      <section className="bg-white py-16">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <p className="text-sm font-black uppercase tracking-wide text-teal">College setup</p>
+          <h2 className="mt-3 max-w-3xl text-4xl font-normal text-ink sm:text-5xl">From empty project to first attendance session.</h2>
+          <div className="mt-10 grid gap-3 md:grid-cols-5">
+            {["College config", "Departments", "Teachers", "Students", "Start session"].map((step, index) => (
+              <div key={step} className="rounded-xl border border-ink/10 bg-paper p-5">
+                <span className="grid h-9 w-9 place-items-center rounded-full bg-ink text-sm font-black text-white">{index + 1}</span>
+                <p className="mt-5 text-sm font-black text-ink">{step}</p>
+                <p className="mt-2 text-xs font-semibold leading-5 text-ink/50">Admin-guided setup keeps one-college deployment simple.</p>
+              </div>
             ))}
           </div>
         </div>

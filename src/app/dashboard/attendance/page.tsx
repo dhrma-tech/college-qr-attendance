@@ -1,5 +1,5 @@
 import { PortalPage } from "@/components/portal-page";
 
 export default function Page() {
-  return <PortalPage role="student" mode="subjects" />;
+  return <PortalPage role="student" mode="attendance" />;
 }
