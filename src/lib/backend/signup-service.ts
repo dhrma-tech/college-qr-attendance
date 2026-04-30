@@ -16,8 +16,8 @@ export type SignupRequestInput = {
   rollNumber?: string;
   employeeId?: string;
   designation?: string;
-  subjectsTaught?: string;
-  classesAssigned?: string;
+  subjectsTaught?: string[];
+  classesAssigned?: string[];
   leadershipRole?: string;
   parentMobileNumber?: string;
   address?: string;

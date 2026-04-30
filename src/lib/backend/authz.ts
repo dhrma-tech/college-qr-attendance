@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import type { Role } from "@/lib/types";
+import type { Role, UserProfile } from "@/lib/types";
 
 export async function requireRole(role: Role) {
   return requireAnyRole([role]);
@@ -16,13 +16,13 @@ export async function requireAnyRole(roles: Role[]) {
     throw new AuthzError("Authentication required", 401);
   }
 
-  const { data: profile, error: profileError } = await supabase.from("users").select("role,is_active").eq("id", user.id).single();
+  const { data: profile, error: profileError } = await supabase.from("users").select("role,is_active,department_id,college_id").eq("id", user.id).single();
 
   if (profileError || !profile?.is_active || !roles.includes(profile.role)) {
     throw new AuthzError(`Active ${roles.join(" or ")} account required`, 403);
   }
 
-  return { user, profile, supabase };
+  return { user, profile: profile as UserProfile, supabase };
 }
 
 export class AuthzError extends Error {

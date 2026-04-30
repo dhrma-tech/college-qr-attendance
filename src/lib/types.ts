@@ -1,5 +1,12 @@
 export type Role = "student" | "teacher" | "hod" | "admin";
 
+export type UserProfile = {
+  role: Role;
+  is_active: boolean;
+  department_id?: string;
+  college_id?: string;
+};
+
 export type NavItem = {
   label: string;
   href: string;

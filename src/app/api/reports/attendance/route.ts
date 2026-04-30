@@ -102,9 +102,8 @@ export async function GET(request: Request) {
     // Get the attendance report with scoped parameters
     const result = await getAttendanceReport(actor ? { 
       actorId: actor.user.id, 
-      role: actor.profile.role,
-      ...scopedParams 
-    } : { ...scopedParams });
+      role: actor.profile.role
+    } : undefined);
     
     const rows = normalizeRows(result);
 
@@ -139,7 +138,7 @@ export async function GET(request: Request) {
       return new Response(toCsv(rows), {
         headers: {
           "Content-Type": "text/csv; charset=utf-8",
-          "Content-Disposition": `attachment; filename="${safeFilename(`scanroll-attendance-report-${actor?.profile.role || 'demo'}-${Date.now()}.csv")}"`
+          "Content-Disposition": `attachment; filename="${safeFilename(`scanroll-attendance-report-${actor?.profile.role || 'demo'}-${Date.now()}.csv`)}"`
         }
       });
     }
@@ -148,7 +147,7 @@ export async function GET(request: Request) {
       return new Response(toPdf(rows), {
         headers: {
           "Content-Type": "application/pdf",
-          "Content-Disposition": `attachment; filename="${safeFilename(`scanroll-attendance-report-${actor?.profile.role || 'demo'}-${Date.now()}.pdf`)}`"
+          "Content-Disposition": `attachment; filename="${safeFilename(`scanroll-attendance-report-${actor?.profile.role || 'demo'}-${Date.now()}.pdf`)}"`
         }
       });
     }

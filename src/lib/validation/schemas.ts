@@ -118,7 +118,7 @@ export interface SignupRequestSchema {
   mobileNumber: string;
   department?: string;
   branch?: string;
-  year?: number;
+  year?: string;
   semester?: string;
   division?: string;
   batch?: string;
@@ -152,7 +152,7 @@ export function validateSignupRequest(data: unknown): SignupRequestSchema {
     mobileNumber: validateMobileNumber(body.mobileNumber),
     department: validateOptional(body.department, (v) => validateString(v, 2, 50)),
     branch: validateOptional(body.branch, (v) => validateString(v, 2, 50)),
-    year: validateOptional(body.year, validateYear),
+    year: validateOptional(body.year, (v) => String(validateYear(v))),
     semester: validateOptional(body.semester, validateSemester),
     division: validateOptional(body.division, (v) => validateString(v, 1, 10)),
     batch: validateOptional(body.batch, (v) => validateString(v, 1, 20)),
@@ -290,7 +290,7 @@ export interface ReportsQuerySchema {
   subjectId?: string;
   classId?: string;
   studentId?: string;
-  format?: 'json' | 'csv';
+  format?: 'json' | 'csv' | 'pdf';
   limit?: number;
   offset?: number;
 }
@@ -318,7 +318,7 @@ export function validateReportsQuery(data: unknown): ReportsQuerySchema {
     subjectId: validateOptional(body.subjectId, validateUUID),
     classId: validateOptional(body.classId, validateUUID),
     studentId: validateOptional(body.studentId, validateUUID),
-    format: validateOptional(body.format, (v) => validateEnum(v, ['json', 'csv'])),
+    format: validateOptional(body.format, (v) => validateEnum(v, ['json', 'csv', 'pdf'])),
     limit: validateOptional(body.limit, (v) => validateNumber(v, 1, 1000)),
     offset: validateOptional(body.offset, (v) => validateNumber(v, 0, 10000))
   };

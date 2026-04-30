@@ -38,7 +38,7 @@ export async function middleware(request: NextRequest) {
     return redirectToLogin(request, protectedArea.login);
   }
 
-  const { data: profile } = await supabase.from("users").select("role,is_active").eq("id", user.id).single();
+  const { data: profile } = await supabase.from("users").select("role,is_active,department_id,college_id").eq("id", user.id).single();
 
   if (!profile?.is_active || profile.role !== protectedArea.role) {
     return redirectToLogin(request, protectedArea.login);

@@ -1,10 +1,10 @@
-import { vi } from 'vitest';
+import { vi, expect } from 'vitest';
 
 // Mock environment variables for testing
-process.env.NODE_ENV = 'test';
-process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://test.supabase.co';
-process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'test-anon-key';
-process.env.SUPABASE_SERVICE_ROLE_KEY = 'test-service-role-key';
+vi.stubEnv('NODE_ENV', 'test');
+vi.stubEnv('NEXT_PUBLIC_SUPABASE_URL', 'https://test.supabase.co');
+vi.stubEnv('NEXT_PUBLIC_SUPABASE_ANON_KEY', 'test-anon-key');
+vi.stubEnv('SUPABASE_SERVICE_ROLE_KEY', 'test-service-role-key');
 
 // Mock Next.js modules
 vi.mock('next/headers', () => ({

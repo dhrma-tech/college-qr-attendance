@@ -21,11 +21,7 @@ export async function POST(request: Request) {
     const validatedData = validateRequest(body, validateSignupRequest);
 
     // Additional business logic validation
-    if (validatedData.requestedRole === 'admin') {
-      return NextResponse.json({ 
-        error: "Public admin signup is not allowed" 
-      }, { status: 400 });
-    }
+    // Admin signup is already prevented by validation schema (only student/teacher/hod allowed)
 
     // Create signup request with validated data
     const result = await createSignupRequest(validatedData);
