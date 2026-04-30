@@ -11,15 +11,17 @@ export function validateString(value: unknown, minLength: number = 0, maxLength:
     throw new Error('Expected string value');
   }
   
-  if (value.length < minLength) {
+  const trimmed = value.trim();
+  
+  if (trimmed.length < minLength) {
     throw new Error(`Value must be at least ${minLength} characters long`);
   }
   
-  if (value.length > maxLength) {
+  if (trimmed.length > maxLength) {
     throw new Error(`Value must be no more than ${maxLength} characters long`);
   }
   
-  return value.trim();
+  return trimmed;
 }
 
 export function validateEmail(value: unknown): string {
