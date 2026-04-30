@@ -28,7 +28,7 @@ export function validateEmail(value: unknown): string {
   const email = validateString(value, 5, 254);
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   
-  if (!emailRegex.test(email)) {
+  if (!emailRegex.test(email) || email.includes('..')) {
     throw new Error('Invalid email format');
   }
   
@@ -84,11 +84,31 @@ export function validateNumber(value: unknown, min?: number, max?: number): numb
 }
 
 export function validateLatitude(value: unknown): number {
-  return validateNumber(value, -90, 90);
+  const num = validateNumber(value, -90, 90);
+  // Custom error messages for bounds
+  if (typeof value === 'number') {
+    if (value > 90) {
+      throw new Error('Latitude must be no more than 90');
+    }
+    if (value < -90) {
+      throw new Error('Latitude must be no more than -90');
+    }
+  }
+  return num;
 }
 
 export function validateLongitude(value: unknown): number {
-  return validateNumber(value, -180, 180);
+  const num = validateNumber(value, -180, 180);
+  // Custom error messages for bounds
+  if (typeof value === 'number') {
+    if (value > 180) {
+      throw new Error('Longitude must be no more than 180');
+    }
+    if (value < -180) {
+      throw new Error('Longitude must be no more than -180');
+    }
+  }
+  return num;
 }
 
 export function validateRadius(value: unknown): number {
