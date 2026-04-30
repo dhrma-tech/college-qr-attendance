@@ -1,5 +1,17 @@
 # ScanRoll
 
+> **⚠️ PRODUCTION WARNING: MVP/STARTER-KIT STATUS**
+> 
+> ScanRoll is currently an MVP/starter-kit and **must not be used with real student data** until you have completed the security hardening steps in [SECURITY.md](./SECURITY.md) and [PRODUCTION_CHECKLIST.md](./PRODUCTION_CHECKLIST.md).
+> 
+> This is a demonstration project for development and testing purposes only. Using it with real student data without proper security configuration poses serious privacy and security risks.
+> 
+> **Required reading before any production use:**
+> - [SECURITY.md](./SECURITY.md) - Security model and requirements
+> - [SETUP.md](./SETUP.md) - Complete setup guide
+> - [PRODUCTION_CHECKLIST.md](./PRODUCTION_CHECKLIST.md) - Production deployment checklist
+> - [RELEASE_CHECKLIST.md](./RELEASE_CHECKLIST.md) - Release preparation checklist
+
 ScanRoll is an open-source QR Code Attendance System for colleges. Teachers can create QR-based attendance sessions, students can scan the QR from their phone, and admins/HODs can review attendance dashboards and reports.
 
 The project is designed to be easy to try first, then connect to a real backend later.
@@ -169,6 +181,117 @@ cp .env.example .env.local
 ```
 
 See [.env.example](./.env.example) for the full list.
+
+## Project Status
+
+**Current Status: MVP/Development Starter Kit**
+
+ScanRoll is in active development and currently suitable for:
+- Local development and testing
+- Demo purposes
+- Understanding the architecture
+- Contributing to open-source development
+
+**Not suitable for:**
+- Production use with real student data
+- Mission-critical attendance systems
+- Large-scale deployments
+
+See [ROADMAP.md](./ROADMAP.md) for planned features and milestones.
+
+## Known Limitations
+
+- **Security**: Requires security hardening before production use
+- **Scalability**: Not tested for large-scale deployments
+- **Testing**: Limited test coverage (needs expansion)
+- **Error Handling**: Basic error handling, needs improvement
+- **Audit Logging**: Limited audit trail functionality
+- **Rate Limiting**: Basic implementation, needs production-grade limits
+- **Mobile Support**: Responsive design but not mobile-optimized
+- **Offline Support**: No offline functionality
+
+## Security Model Summary
+
+ScanRoll uses a layered security approach:
+
+- **Supabase Auth**: User authentication and session management
+- **Row Level Security (RLS)**: Database-level access control
+- **Role-based Access Control**: Student, Teacher, HOD, Admin roles
+- **Server-side Validation**: API route validation and business logic
+- **Service Role Key**: Bypasses RLS for privileged operations (server-only)
+
+**Critical Security Requirements:**
+- Never expose `SUPABASE_SERVICE_ROLE_KEY` to client code
+- Complete all RLS policies before production
+- Implement rate limiting on all API endpoints
+- Review and harden all input validation
+- Enable audit logging for sensitive operations
+
+See [SECURITY.md](./SECURITY.md) for complete security documentation.
+
+## Privacy and Student Data Warning
+
+⚠️ **Student Data Privacy Notice**
+
+This system handles sensitive student information including:
+- Personal identifiers (name, email, mobile)
+- Attendance records and patterns
+- Academic enrollment information
+- Location data (geofencing)
+
+**Requirements for Production Use:**
+- Compliance with applicable privacy laws (GDPR, FERPA, etc.)
+- Institutional privacy policy review and approval
+- Student consent mechanisms
+- Data retention and deletion policies
+- Secure backup and recovery procedures
+- Audit trail for all data access
+
+See [docs/PRIVACY.md](./docs/PRIVACY.md) for detailed privacy considerations.
+
+## Testing
+
+**Current Testing Status: Limited**
+
+The project currently has:
+- Basic manual testing procedures
+- No automated test suite (planned)
+- No integration tests (planned)
+- No security tests (planned)
+
+**Planned Testing Improvements:**
+- Unit tests with Vitest
+- API route integration tests
+- Database/RLS policy tests
+- Security validation tests
+- End-to-end QR flow tests
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for testing guidelines.
+
+## Folder Structure
+
+```
+ScanRoll/
+├── src/
+│   ├── app/                 # Next.js pages and API routes
+│   │   ├── api/            # Backend API endpoints
+│   │   ├── admin/          # Admin dashboard pages
+│   │   ├── dashboard/      # Student dashboard
+│   │   ├── teacher/        # Teacher dashboard
+│   │   └── hod/            # HOD dashboard
+│   ├── components/         # Reusable UI components
+│   ├── lib/               # Utility functions and helpers
+│   │   ├── supabase/      # Supabase client configurations
+│   │   └── backend/       # Server-side logic
+│   └── types.ts           # TypeScript type definitions
+├── supabase/
+│   ├── migrations/        # Database schema migrations
+│   ├── functions/         # Database functions
+│   └── seed.sql          # Sample data
+├── docs/                 # Additional documentation
+├── .github/              # GitHub workflows and templates
+└── *.md                 # Project documentation
+```
 
 ## Important Production Notice
 

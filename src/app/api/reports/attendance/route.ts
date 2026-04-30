@@ -2,40 +2,190 @@ import { NextResponse } from "next/server";
 import { AuthzError, requireAnyRole } from "@/lib/backend/authz";
 import { hasSupabaseServerEnv } from "@/lib/backend/env";
 import { getAttendanceReport } from "@/lib/backend/attendance-service";
+import { validateRequest, validateReportsQuery, ValidationError } from "@/lib/validation/schemas";
+import { rateLimiters } from "@/lib/rate-limiting";
+import { createClient } from "@/lib/supabase/server";
 
 type ReportRow = Record<string, string | number | boolean | null | undefined>;
 
 export async function GET(request: Request) {
   try {
-    const format = new URL(request.url).searchParams.get("format") || "json";
+    // Apply rate limiting for reports
+    const rateLimitHandler = rateLimiters.reports(async (req) => {
+      return NextResponse.json({ status: "ok" });
+    });
+    
+    const rateLimitResponse = await rateLimitHandler(request);
+    if (rateLimitResponse.status === 429) {
+      return rateLimitResponse;
+    }
+
+    // Parse and validate query parameters
+    const url = new URL(request.url);
+    const queryParams = {
+      startDate: url.searchParams.get("startDate"),
+      endDate: url.searchParams.get("endDate"),
+      subjectId: url.searchParams.get("subjectId"),
+      classId: url.searchParams.get("classId"),
+      studentId: url.searchParams.get("studentId"),
+      format: url.searchParams.get("format") || "json",
+      limit: url.searchParams.get("limit"),
+      offset: url.searchParams.get("offset")
+    };
+
+    const validatedParams = validateRequest(queryParams, validateReportsQuery);
+
     const actor = hasSupabaseServerEnv() ? await requireAnyRole(["student", "teacher", "hod", "admin"]) : null;
-    const result = await getAttendanceReport(actor ? { actorId: actor.user.id, role: actor.profile.role } : undefined);
+
+    // Apply role-based data scoping
+    let scopedParams = { ...validatedParams };
+    
+    if (actor) {
+      switch (actor.profile.role) {
+        case 'student':
+          // Students can only see their own data
+          scopedParams.studentId = actor.user.id;
+          // Remove filters that would allow seeing other students
+          delete scopedParams.classId;
+          delete scopedParams.subjectId;
+          break;
+          
+        case 'teacher':
+          // Teachers can only see data for their assigned classes
+          const supabase = await createClient();
+          const { data: teacherAssignments } = await supabase
+            .from('subject_assignments')
+            .select('id, subject_id')
+            .eq('teacher_id', actor.user.id);
+          
+          if (teacherAssignments && teacherAssignments.length > 0) {
+            // If subjectId is provided, ensure it's one of their assigned subjects
+            if (scopedParams.subjectId) {
+              const isAssigned = teacherAssignments.some(
+                assignment => assignment.subject_id === scopedParams.subjectId
+              );
+              if (!isAssigned) {
+                return NextResponse.json({ 
+                  error: "Access denied: Subject not assigned to this teacher" 
+                }, { status: 403 });
+              }
+            }
+          }
+          break;
+          
+        case 'hod':
+          // HODs can only see data for their department
+          // This is enforced at the RLS level, but we add additional validation
+          if (scopedParams.studentId) {
+            const supabase = await createClient();
+            const { data: student } = await supabase
+              .from('users')
+              .select('department_id')
+              .eq('id', scopedParams.studentId)
+              .single();
+            
+            if (student && student.department_id !== actor.profile.department_id) {
+              return NextResponse.json({ 
+                error: "Access denied: Student not in HOD's department" 
+              }, { status: 403 });
+            }
+          }
+          break;
+          
+        case 'admin':
+          // Admins can see all data in their college
+          // This is enforced at the RLS level
+          break;
+      }
+    }
+
+    // Get the attendance report with scoped parameters
+    const result = await getAttendanceReport(actor ? { 
+      actorId: actor.user.id, 
+      role: actor.profile.role,
+      ...scopedParams 
+    } : { ...scopedParams });
+    
     const rows = normalizeRows(result);
 
-    if (format === "csv") {
+    // Log export for audit purposes
+    if (actor && validatedParams.format !== 'json') {
+      const supabase = await createClient();
+      await supabase
+        .from('audit_logs')
+        .insert({
+          actor_id: actor.user.id,
+          action: 'EXPORT_ATTENDANCE_REPORT',
+          table_name: 'attendance_records',
+          record_id: null,
+          old_val: null,
+          new_val: {
+            format: validatedParams.format,
+            record_count: rows.length,
+            filters: scopedParams,
+            exported_at: new Date().toISOString()
+          }
+        });
+    }
+
+    // Apply export rate limiting (additional protection)
+    if (validatedParams.format !== 'json' && rows.length > 1000) {
+      return NextResponse.json({ 
+        error: "Export too large. Please apply filters to reduce data size." 
+      }, { status: 400 });
+    }
+
+    if (validatedParams.format === "csv") {
       return new Response(toCsv(rows), {
         headers: {
           "Content-Type": "text/csv; charset=utf-8",
-          "Content-Disposition": `attachment; filename="${safeFilename("scanroll-attendance-report.csv")}"`
+          "Content-Disposition": `attachment; filename="${safeFilename(`scanroll-attendance-report-${actor?.profile.role || 'demo'}-${Date.now()}.csv")}"`
         }
       });
     }
 
-    if (format === "pdf") {
+    if (validatedParams.format === "pdf") {
       return new Response(toPdf(rows), {
         headers: {
           "Content-Type": "application/pdf",
-          "Content-Disposition": `attachment; filename="${safeFilename("scanroll-attendance-report.pdf")}"`
+          "Content-Disposition": `attachment; filename="${safeFilename(`scanroll-attendance-report-${actor?.profile.role || 'demo'}-${Date.now()}.pdf`)}`"
         }
       });
     }
 
-    return NextResponse.json({ ...result, rows });
+    return NextResponse.json({ 
+      ...result, 
+      rows,
+      meta: {
+        recordCount: rows.length,
+        role: actor?.profile.role || 'demo',
+        exportedAt: new Date().toISOString()
+      }
+    });
+
   } catch (error) {
-    if (error instanceof AuthzError) {
-      return NextResponse.json({ error: error.message }, { status: error.status });
+    console.error('Attendance report error:', error);
+    
+    // Handle validation errors specifically
+    if (error instanceof ValidationError) {
+      return NextResponse.json({ 
+        error: "Invalid query parameters",
+        details: error.message,
+        field: error.field
+      }, { status: 400 });
     }
-    return NextResponse.json({ error: error instanceof Error ? error.message : "Unable to generate attendance report" }, { status: 400 });
+
+    // Handle authorization errors specifically
+    if (error instanceof AuthzError) {
+      return NextResponse.json({ 
+        error: error.message 
+      }, { status: error.status });
+    }
+
+    // Generic error - don't expose internal details
+    return NextResponse.json({ 
+      error: "Unable to generate attendance report at this time" 
+    }, { status: 500 });
   }
 }
 

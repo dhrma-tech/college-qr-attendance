@@ -1,36 +1,63 @@
 import { NextResponse } from "next/server";
 import { createSignupRequest } from "@/lib/backend/signup-service";
+import { validateRequest, validateSignupRequest, ValidationError } from "@/lib/validation/schemas";
+import { rateLimiters } from "@/lib/rate-limiting";
 
 export async function POST(request: Request) {
   try {
+    // Apply rate limiting
+    const rateLimitHandler = rateLimiters.signup(async (req) => {
+      return NextResponse.json({ status: "ok" });
+    });
+    
+    const rateLimitResponse = await rateLimitHandler(request);
+    if (rateLimitResponse.status === 429) {
+      return rateLimitResponse;
+    }
+
     const body = await request.json();
 
-    const result = await createSignupRequest({
-      requestedRole: body.requestedRole,
-      fullName: body.fullName,
-      email: body.email,
-      mobileNumber: body.mobileNumber,
-      department: body.department,
-      branch: body.branch,
-      year: body.year,
-      semester: body.semester,
-      division: body.division,
-      batch: body.batch,
-      rollNumber: body.rollNumber,
-      employeeId: body.employeeId,
-      designation: body.designation,
-      subjectsTaught: body.subjectsTaught,
-      classesAssigned: body.classesAssigned,
-      leadershipRole: body.leadershipRole,
-      parentMobileNumber: body.parentMobileNumber,
-      address: body.address,
-      emergencyContact: body.emergencyContact,
-      officeLocation: body.officeLocation,
-      cabinRoomNumber: body.cabinRoomNumber
+    // Validate input with strict schema
+    const validatedData = validateRequest(body, validateSignupRequest);
+
+    // Additional business logic validation
+    if (validatedData.requestedRole === 'admin') {
+      return NextResponse.json({ 
+        error: "Public admin signup is not allowed" 
+      }, { status: 400 });
+    }
+
+    // Create signup request with validated data
+    const result = await createSignupRequest(validatedData);
+
+    return NextResponse.json({
+      ...result,
+      // Don't expose internal details
+      message: "Signup request submitted successfully. Please wait for approval."
     });
 
-    return NextResponse.json(result);
   } catch (error) {
-    return NextResponse.json({ error: error instanceof Error ? error.message : "Unable to create signup request" }, { status: 400 });
+    console.error('Signup request error:', error);
+    
+    // Handle validation errors specifically
+    if (error instanceof ValidationError) {
+      return NextResponse.json({ 
+        error: "Invalid input data",
+        details: error.message,
+        field: error.field
+      }, { status: 400 });
+    }
+
+    // Handle duplicate requests specifically
+    if (error instanceof Error && error.message.includes('duplicate')) {
+      return NextResponse.json({ 
+        error: "A signup request with this email or mobile number already exists"
+      }, { status: 409 });
+    }
+
+    // Generic error - don't expose internal details
+    return NextResponse.json({ 
+      error: "Unable to process signup request at this time" 
+    }, { status: 500 });
   }
 }

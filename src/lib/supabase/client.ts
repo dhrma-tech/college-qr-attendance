@@ -1,8 +1,19 @@
 import { createBrowserClient } from "@supabase/ssr";
+import { getSupabaseConfig, validateClientSideSafety } from "../env-validation";
 
 export function createClient() {
-  return createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL || "https://example.supabase.co",
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "demo-anon-key"
-  );
+  // Validate that we're not exposing service role key to client
+  validateClientSideSafety();
+  
+  const config = getSupabaseConfig();
+  
+  // In demo mode, return a mock client that works with localStorage
+  if (config.isDemoMode) {
+    return createBrowserClient(
+      "https://example.supabase.co",
+      "demo-anon-key"
+    );
+  }
+  
+  return createBrowserClient(config.url, config.anonKey);
 }
