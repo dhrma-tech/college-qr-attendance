@@ -33,10 +33,7 @@ export function validateSupabaseEnv(): EnvValidationResult {
   
   if (isDemoMode) {
     if (isProduction) {
-      errors.push(
-        'Demo mode is not allowed in production. ' +
-        'Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY environment variables.'
-      );
+      throw new Error('Demo mode is not allowed in production');
     } else {
       warnings.push(
         'Running in demo mode with mock data. ' +
@@ -86,7 +83,7 @@ export function validateSupabaseEnv(): EnvValidationResult {
       errors.push('SUPABASE_SERVICE_ROLE_KEY appears to be invalid (too short)');
     }
   } else if (!isDemoMode && isProduction) {
-    errors.push('SUPABASE_SERVICE_ROLE_KEY is required in production');
+    throw new Error('SUPABASE_SERVICE_ROLE_KEY is required in production');
   }
   
   // Check for public exposure of service role key
@@ -131,11 +128,21 @@ export function getSupabaseConfig() {
     );
   }
   
+  // Return empty strings for service role key in demo mode
+  if (validation.isDemoMode) {
+    return {
+      url: '',
+      anonKey: '',
+      serviceRoleKey: '',
+      isDemoMode: true
+    };
+  }
+  
   return {
     url: process.env.NEXT_PUBLIC_SUPABASE_URL || '',
     anonKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '',
     serviceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY || '',
-    isDemoMode: validation.isDemoMode
+    isDemoMode: false
   };
 }
 
