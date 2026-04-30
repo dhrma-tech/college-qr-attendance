@@ -74,7 +74,9 @@ export function validateSupabaseEnv(): EnvValidationResult {
   }
   
   // Validate service role key (server-side only)
-  if (serviceRoleKey) {
+  if (!serviceRoleKey && !isDemoMode && isProduction) {
+    errors.push('SUPABASE_SERVICE_ROLE_KEY is required in production');
+  } else if (serviceRoleKey) {
     if (serviceRoleKey.includes('placeholder') || serviceRoleKey.includes('demo')) {
       errors.push(
         'SUPABASE_SERVICE_ROLE_KEY contains placeholder value. ' +
@@ -85,17 +87,11 @@ export function validateSupabaseEnv(): EnvValidationResult {
     if (serviceRoleKey.length < 100) {
       errors.push('SUPABASE_SERVICE_ROLE_KEY appears to be invalid (too short)');
     }
-  } else if (!isDemoMode && isProduction) {
-    errors.push('SUPABASE_SERVICE_ROLE_KEY is required in production');
   }
   
   // Check for public exposure of service role key
   if (process.env.NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY) {
-    errors.push(
-      'CRITICAL: NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY is set. ' +
-      'The service role key must never be exposed to the client-side. ' +
-      'Remove NEXT_PUBLIC_ prefix and ensure it is only used server-side.'
-    );
+    errors.push('CRITICAL: NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY is set');
   }
   
   const isValid = errors.length === 0;
@@ -129,6 +125,16 @@ export function getSupabaseConfig() {
       'Supabase configuration is invalid:\n' +
       validation.errors.join('\n')
     );
+  }
+  
+  // In demo mode, return empty strings to prevent test contamination
+  if (validation.isDemoMode) {
+    return {
+      url: '',
+      anonKey: '',
+      serviceRoleKey: '',
+      isDemoMode: true
+    };
   }
   
   return {

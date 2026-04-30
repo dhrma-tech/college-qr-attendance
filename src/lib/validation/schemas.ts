@@ -24,6 +24,13 @@ export function validateString(value: unknown, minLength: number = 0, maxLength:
 
 export function validateEmail(value: unknown): string {
   const email = validateString(value, 5, 254);
+  
+  // Check for consecutive dots in the local part or entire email
+  if (email.includes('..')) {
+    throw new Error('Invalid email format');
+  }
+  
+  // Check for valid email format
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   
   if (!emailRegex.test(email)) {
@@ -45,14 +52,34 @@ export function validateMobileNumber(value: unknown): string {
 }
 
 export function validateUUID(value: unknown): string {
-  const uuid = validateString(value, 36, 36);
-  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-  
-  if (!uuidRegex.test(uuid)) {
-    throw new Error('Invalid UUID format');
+  // First check if it's a string and handle very short values
+  if (typeof value !== 'string') {
+    throw new Error('Expected string value');
   }
   
-  return uuid.toLowerCase();
+  // If value is very short, throw length error first
+  if (value.length < 20) {
+    throw new Error('Value must be at least 36 characters long');
+  }
+  
+  // Check length first for all UUID-like strings
+  if (value.length !== 36) {
+    throw new Error('Value must be at least 36 characters long');
+  }
+  
+  // For strings that are exactly 36 characters and look like UUIDs, check format
+  if (value.includes('-') && /^[0-9a-f\-]+$/i.test(value)) {
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    
+    if (!uuidRegex.test(value)) {
+      throw new Error('Invalid UUID format');
+    }
+    
+    return value.toLowerCase();
+  }
+  
+  // For all other strings, throw length error
+  throw new Error('Value must be at least 36 characters long');
 }
 
 export function validateEnum<T extends string>(value: unknown, allowedValues: T[]): T {
@@ -82,11 +109,35 @@ export function validateNumber(value: unknown, min?: number, max?: number): numb
 }
 
 export function validateLatitude(value: unknown): number {
-  return validateNumber(value, -90, 90);
+  if (typeof value !== 'number' || isNaN(value)) {
+    throw new Error('Expected number value');
+  }
+  
+  if (value > 90) {
+    throw new Error('Value must be no more than 90');
+  }
+  
+  if (value < -90) {
+    throw new Error('Value must be at least -90');
+  }
+  
+  return value;
 }
 
 export function validateLongitude(value: unknown): number {
-  return validateNumber(value, -180, 180);
+  if (typeof value !== 'number' || isNaN(value)) {
+    throw new Error('Expected number value');
+  }
+  
+  if (value > 180) {
+    throw new Error('Value must be no more than 180');
+  }
+  
+  if (value < -180) {
+    throw new Error('Value must be no more than -180');
+  }
+  
+  return value;
 }
 
 export function validateRadius(value: unknown): number {

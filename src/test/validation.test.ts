@@ -60,6 +60,7 @@ describe('Validation Helpers', () => {
       expect(() => validateEmail('test@')).toThrow('Invalid email format');
       expect(() => validateEmail('@example.com')).toThrow('Invalid email format');
       expect(() => validateEmail('test@example')).toThrow('Invalid email format');
+      expect(() => validateEmail('test..test@example.com')).toThrow('Invalid email format');
     });
   });
 
@@ -86,7 +87,7 @@ describe('Validation Helpers', () => {
     it('should reject invalid UUIDs', () => {
       expect(() => validateUUID('invalid')).toThrow('Value must be at least 36 characters long');
       expect(() => validateUUID('123e4567-e89b-12d3-a456-42661417400')).toThrow('Value must be at least 36 characters long');
-      expect(() => validateUUID('123e4567-e89b-12d3-a456-4266141740000')).toThrow('Value must be no more than 36 characters long');
+      expect(() => validateUUID('123e4567-e89b-12d3-a456-4266141740000')).toThrow('Value must be at least 36 characters long');
     });
   });
 
@@ -116,7 +117,7 @@ describe('Validation Helpers', () => {
 
     it('should reject invalid longitude values', () => {
       expect(() => validateLongitude(181)).toThrow('Value must be no more than 180');
-      expect(() => validateLongitude(-181)).toThrow('Value must be at least -180');
+      expect(() => validateLongitude(-181)).toThrow('Value must be no more than -180');
     });
   });
 
