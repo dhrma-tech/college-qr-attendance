@@ -1,170 +1,205 @@
-Here’s a **clean, professional, actually useful README** for your project — not the usual lazy GitHub dump.
+# ScanRoll
 
-You can copy-paste this directly:
+ScanRoll is an open-source QR Code Attendance System for colleges. Teachers can create QR-based attendance sessions, students can scan the QR from their phone, and admins/HODs can review attendance dashboards and reports.
 
----
+The project is designed to be easy to try first, then connect to a real backend later.
 
-# 🚀 ScanRoll
+## What You Can Do
 
-**ScanRoll** is an open-source **QR Code Attendance System for colleges** that replaces manual attendance with fast, secure, and trackable digital workflows.
+- Run a working local demo without creating any backend account.
+- Open student, teacher, HOD, and admin dashboards.
+- Simulate QR attendance sessions.
+- Scan a real QR code with the camera on supported devices.
+- Export attendance reports as CSV or PDF.
+- Connect Supabase for real authentication, database storage, and server-side QR validation.
 
-It allows teachers to generate attendance sessions using QR codes and enables students to mark attendance instantly by scanning them.
+## Who This README Is For
 
----
+This guide is written for non-technical users too. If you can install an app and copy-paste commands, you can run the demo.
 
-## 📌 Why ScanRoll?
+If you get stuck, check [SETUP.md](./SETUP.md). It has slower step-by-step instructions and troubleshooting.
 
-Traditional attendance systems are:
+## Setup Option 1: Quick Demo
 
-* Slow
-* Prone to proxy attendance
-* Hard to manage at scale
+Use this if you only want to see the website working on your laptop.
 
-ScanRoll solves this by introducing:
+### Step 1: Install Node.js
 
-* ⚡ Instant QR-based attendance
-* 📊 Real-time tracking
-* 👥 Role-based system (Student / Teacher / Admin)
+Install Node.js from:
 
----
-
-## ⚙️ Features
-
-* ✅ QR-based attendance marking
-* 👨‍🏫 Teacher session creation
-* 🎓 Student attendance logging
-* 📊 Attendance dashboard
-* 📁 Session-wise tracking
-* 🕒 Timestamp-based records
-* 🔐 Role-based access (demo mode)
-
----
-
-## 🔄 How It Works
-
-1. **Teacher creates a session**
-2. System generates a **QR code (or session ID)**
-3. Students **scan the QR**
-4. Attendance is recorded instantly
-5. Teacher/Admin can view attendance logs
-
----
-
-## 🧱 Tech Stack
-
-* ⚛️ Frontend: React (with Vite)
-* 🎨 Styling: Tailwind CSS
-* 📦 State: Local state / localStorage (demo mode)
-
----
-
-## 🖥️ Project Structure
-
-```
-frontend/
- ├── src/
- │   ├── pages/        → UI pages (Dashboard, Login, etc.)
- │   ├── components/   → Reusable components
- │   ├── context/      → Auth & global state
- │   ├── data/         → Demo data (students, sessions)
- │   └── layouts/      → App layout
+```text
+https://nodejs.org
 ```
 
----
+Choose the LTS version if you are unsure.
 
-## 🚀 Getting Started
+### Step 2: Open The Project Folder
 
-### 1. Clone the repo
+Open a terminal in the project folder.
 
-```bash
-git clone https://github.com/your-username/scanroll.git
-cd scanroll
-```
+On Windows, you can open the folder, click the address bar, type `powershell`, and press Enter.
 
-### 2. Install dependencies
+### Step 3: Install The App
 
 ```bash
 npm install
 ```
 
-### 3. Run the app
+### Step 4: Start The App
 
 ```bash
 npm run dev
 ```
 
----
+### Step 5: Open The Website
 
-## 🔐 Demo Mode Notice
+Open this address in your browser:
 
-This project currently runs in **demo mode**:
+```text
+http://127.0.0.1:3000
+```
 
-* Authentication uses **localStorage**
-* Data is **not persisted in a real database**
-* QR scanning is **simulated**
+## Demo Login Emails
 
-⚠️ This is **NOT production-ready**
+In demo mode, no password is required.
 
----
+| Role | Login Page | Demo Email |
+|---|---|---|
+| Student | `/login` | `student@scanroll.demo` |
+| Teacher | `/teacherlogin` | `teacher@scanroll.demo` |
+| HOD | `/hodlogin` | `hod@scanroll.demo` |
+| Admin | `/admin/login` | `admin@scanroll.demo` |
 
-## 🛠️ Production Setup (What’s Missing)
+Demo data is stored in your browser only. It is safe for testing, but it is not for real college attendance.
 
-To use ScanRoll in real-world environments, you need to add:
+## Setup Option 2: Supabase Backend
 
-* Backend (Node.js / Django / etc.)
-* Database (PostgreSQL / Firebase / MongoDB)
-* Real authentication (JWT / OAuth)
-* Actual QR scanner integration
-* API-based attendance tracking
+Use this when you want real login, database persistence, and server-side QR validation.
 
----
+Short version:
 
-## 📈 Future Improvements
+1. Create a Supabase project.
+2. Run the SQL migration files from `supabase/migrations` in order.
+3. Copy `.env.example` to `.env.local`.
+4. Paste your Supabase URL, anon key, and service role key into `.env.local`.
+5. Create real Supabase Auth users and matching rows in the `users` table.
+6. Run `npm run dev`.
 
-* 📷 Real QR scanning via camera
-* 📊 Advanced analytics dashboard
-* 📤 Export attendance (CSV / Excel)
-* 📱 Mobile-first UI
-* 🔐 Secure authentication system
-* ☁️ Cloud deployment support
+Detailed instructions are in [SETUP.md](./SETUP.md).
 
----
+## Features
 
-## 🤝 Contributing
+- QR-based attendance marking
+- Student, Teacher, HOD, and Admin portals
+- Role-checked login when Supabase is configured
+- Server-side QR token validation
+- Attendance logs and summaries
+- Camera QR scanner
+- CSV and PDF report exports
+- Supabase database migrations
+- Demo mode for easy local testing
 
-Contributions are welcome.
+## Product Preview
 
-Steps:
+### Landing Page
 
-1. Fork the repo
-2. Create a new branch
-3. Make your changes
-4. Submit a Pull Request
+![ScanRoll landing hero](docs/screenshots/landing-hero.png)
 
----
+### Hero Section
 
-## 📜 License
+![Landing hero section](docs/screenshots/landing-hero-section.png)
 
-This project is licensed under the **MIT License**.
+### Student Login
 
-You are free to use and modify it — **just give proper credit**.
+![Student login page](docs/screenshots/student-login.png)
 
----
+### Student Attendance Dashboard
 
-## 💡 Final Note
+![Student dashboard attendance view](docs/screenshots/student-dashboard-attendance.png)
 
-ScanRoll is built as a **foundation project**.
-It’s simple by design, but powerful enough to evolve into a full-scale college management tool.
+### Teacher Live QR Session
 
-If you build on top of it — build it properly.
+![Teacher live QR session page](docs/screenshots/teacher-live-qr-session.png)
 
----
+### Teacher Reports
 
-If you want next step:
-I can write:
+![Teacher reports page](docs/screenshots/teacher-reports-page.png)
 
-* **CONTRIBUTING.md (serious version)**
-* **SECURITY.md**
-* or help you turn this into a **real backend system (not demo)**
+## How It Works
 
-Just say.
+1. Teacher starts an attendance session.
+2. ScanRoll creates a QR token.
+3. Student scans the QR code.
+4. The server checks the token, user role, expiry, and duplicate status.
+5. Attendance is recorded.
+6. Teacher/HOD/Admin can review reports.
+
+## Tech Stack
+
+- Next.js 15
+- React
+- Tailwind CSS
+- Supabase Auth and PostgreSQL
+- `qrcode` for QR display
+- `html5-qrcode` for camera scanning
+- Recharts
+
+## Common Commands
+
+```bash
+npm install
+npm run dev
+npm run lint
+npm run typecheck
+npm run build
+```
+
+## Environment Variables
+
+Create `.env.local` only when connecting Supabase.
+
+```bash
+copy .env.example .env.local
+```
+
+On macOS/Linux:
+
+```bash
+cp .env.example .env.local
+```
+
+See [.env.example](./.env.example) for the full list.
+
+## Important Production Notice
+
+Before using ScanRoll with real students, review:
+
+- Supabase RLS policies
+- Admin account creation process
+- QR expiry settings
+- Audit logs
+- Rate limiting
+- Backups
+- College privacy requirements
+
+Read [SECURITY.md](./SECURITY.md) before production use.
+
+## Project Files To Know
+
+| File/Folder | Purpose |
+|---|---|
+| `src/app` | Website pages and API routes |
+| `src/components` | Reusable UI components |
+| `src/lib` | Data, backend helpers, Supabase clients |
+| `supabase/migrations` | Database schema files |
+| `.env.example` | Environment variable template |
+| `SETUP.md` | Detailed setup guide |
+| `SECURITY.md` | Security notes |
+
+## Contributing
+
+Contributions are welcome. Please read [CONTRIBUTING.md](./CONTRIBUTING.md).
+
+## License
+
+MIT License. See [LICENSE](./LICENSE).
