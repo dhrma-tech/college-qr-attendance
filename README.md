@@ -105,10 +105,6 @@ Detailed instructions are in [SETUP.md](./SETUP.md).
 
 ![ScanRoll landing hero](docs/screenshots/landing-hero.png)
 
-### Hero Section
-
-![Landing hero section](docs/screenshots/landing-hero-section.png)
-
 ### Student Login
 
 ![Student login page](docs/screenshots/student-login.png)
@@ -117,13 +113,17 @@ Detailed instructions are in [SETUP.md](./SETUP.md).
 
 ![Student dashboard attendance view](docs/screenshots/student-dashboard-attendance.png)
 
-### Teacher Live QR Session
+### Teacher Dashboard
 
-![Teacher live QR session page](docs/screenshots/teacher-live-qr-session.png)
+![Teacher dashboard page](docs/screenshots/teacher-dashboard.png)
 
 ### Teacher Reports
 
 ![Teacher reports page](docs/screenshots/teacher-reports-page.png)
+
+### Teacher Start Attendance / Live QR
+
+![Teacher live QR session page](docs/screenshots/teacher-live-qr-session.png)
 
 ## How It Works
 
