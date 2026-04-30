@@ -5,8 +5,8 @@ describe('Environment Validation', () => {
   const originalEnv = { ...process.env };
   
   // Realistic Supabase keys (JWT-like, minimum 100 chars)
-  const validAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRlc3QtcmVmLXZhbHVlIiwicm9sZSI6ImFub24iLCJpYXQiOjE2MjIwMDAwMDAsImV4cCI6MjUyNDYwODAwMH0.test-signature-value-for-valid-anon-key';
-  const validServiceKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRlc3QtcmVmLXZhbHVlIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTYyMjAwMDAwMCwiZXhwIjoyNTI0NjA4MDAwfQ.test-signature-value-for-service-role-key';
+  const validAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRlc3QiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTYyMjAwMDAwMCwiZXhwIjoyNTI0NjA4MDAwfQ.test-signature-here-valid-anonkey';
+  const validServiceKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRlc3QiLCJyb2xlIjoic2VydmljZV9yb2xlIiwiaWF0IjoxNjIyMDAwMDAwLCJleHAiOjI1MjQ2MDgwMDB9.test-signature-valid-servicekey';
 
   beforeEach(() => {
     // Reset environment before each test
@@ -65,8 +65,8 @@ describe('Environment Validation', () => {
     it('should reject placeholder values in production', () => {
       vi.stubEnv('NODE_ENV', 'production');
       vi.stubEnv('NEXT_PUBLIC_SUPABASE_URL', 'https://example.supabase.co');
-      vi.stubEnv('NEXT_PUBLIC_SUPABASE_ANON_KEY', 'demo-anon-key');
-      vi.stubEnv('SUPABASE_SERVICE_ROLE_KEY', 'placeholder-key');
+      vi.stubEnv('NEXT_PUBLIC_SUPABASE_ANON_KEY', validAnonKey);
+      vi.stubEnv('SUPABASE_SERVICE_ROLE_KEY', validServiceKey);
 
       expect(() => validateSupabaseEnv()).toThrow(
         'NEXT_PUBLIC_SUPABASE_URL contains placeholder value'
