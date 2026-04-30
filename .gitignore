@@ -1,11 +1,13 @@
 # Dependencies
 node_modules/
-frontend/node_modules/
+.next/
 
 # Build output
 dist/
-frontend/dist/
 dist-ssr/
+out/
+coverage/
+*.tsbuildinfo
 
 # Logs and reports
 *.log
@@ -21,6 +23,10 @@ seed_error.txt
 .env
 .env.*
 !.env.example
+
+# Supabase local state
+supabase/.branches/
+supabase/.temp/
 
 # Editors and OS files
 .vscode/*

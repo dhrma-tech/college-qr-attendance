@@ -1,12 +1,43 @@
 {
-  "name": "campusforge-ai-studio",
+  "name": "scanroll",
   "version": "1.0.0",
-  "description": "Single-college AI prompt and workflow platform for web development and digital creation.",
+  "private": false,
+  "description": "ScanRoll is an open-source QR Code Attendance System for colleges with student, teacher, HOD, and admin roles.",
   "scripts": {
-    "dev": "npm --prefix frontend run dev",
-    "build": "npm --prefix frontend install && npm --prefix frontend run build",
-    "start": "npm --prefix frontend run preview",
-    "lint": "npm --prefix frontend run lint",
-    "preview": "npm --prefix frontend run preview"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "next typegen && tsc --noEmit"
+  },
+  "dependencies": {
+    "@radix-ui/react-slot": "^1.1.0",
+    "@supabase/ssr": "^0.5.2",
+    "@supabase/supabase-js": "^2.45.4",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.1",
+    "html5-qrcode": "^2.3.8",
+    "lucide-react": "^0.468.0",
+    "next": "^15.5.15",
+    "qrcode": "^1.5.4",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "recharts": "^2.12.7",
+    "tailwind-merge": "^2.5.4"
+  },
+  "devDependencies": {
+    "@types/node": "^22.7.6",
+    "@types/qrcode": "^1.5.5",
+    "@types/react": "^18.3.11",
+    "@types/react-dom": "^18.3.1",
+    "autoprefixer": "^10.4.20",
+    "eslint": "^8.57.1",
+    "eslint-config-next": "^15.5.15",
+    "postcss": "8.5.10",
+    "tailwindcss": "^3.4.14",
+    "typescript": "^5.6.3"
+  },
+  "overrides": {
+    "postcss": "8.5.10"
   }
 }
