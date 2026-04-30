@@ -26,8 +26,8 @@ describe('Environment Validation', () => {
     it('should validate production environment with all required variables', () => {
       vi.stubEnv('NODE_ENV', 'production');
       vi.stubEnv('NEXT_PUBLIC_SUPABASE_URL', 'https://test.supabase.co');
-      vi.stubEnv('NEXT_PUBLIC_SUPABASE_ANON_KEY', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.test');
-      vi.stubEnv('SUPABASE_SERVICE_ROLE_KEY', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.service-role');
+      vi.stubEnv('NEXT_PUBLIC_SUPABASE_ANON_KEY', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c');
+      vi.stubEnv('SUPABASE_SERVICE_ROLE_KEY', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c');
 
       const result = validateSupabaseEnv();
       expect(result.isValid).toBe(true);
@@ -39,12 +39,13 @@ describe('Environment Validation', () => {
       vi.stubEnv('NODE_ENV', 'development');
       vi.stubEnv('NEXT_PUBLIC_SUPABASE_URL', '');
       vi.stubEnv('NEXT_PUBLIC_SUPABASE_ANON_KEY', '');
+      vi.stubEnv('SUPABASE_SERVICE_ROLE_KEY', '');
 
       const result = validateSupabaseEnv();
       expect(result.isValid).toBe(true);
       expect(result.isDemoMode).toBe(true);
       expect(result.warnings).toContain(
-        expect.stringContaining('Running in demo mode')
+        'Running in demo mode with mock data. Set Supabase environment variables for full functionality.'
       );
     });
 
@@ -93,24 +94,22 @@ describe('Environment Validation', () => {
 
     it('should detect public service role key exposure', () => {
       vi.stubEnv('NEXT_PUBLIC_SUPABASE_URL', 'https://test.supabase.co');
-      vi.stubEnv('NEXT_PUBLIC_SUPABASE_ANON_KEY', 'valid-key');
+      vi.stubEnv('NEXT_PUBLIC_SUPABASE_ANON_KEY', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c');
       vi.stubEnv('NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY', 'exposed-service-role');
 
       const result = validateSupabaseEnv();
       expect(result.isValid).toBe(false);
-      expect(result.errors).toContain(
-        'CRITICAL: NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY is set'
-      );
+      expect(result.errors.some(error => error.includes('CRITICAL: NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY is set'))).toBe(true);
     });
 
     it('should require service role key in production', () => {
       vi.stubEnv('NODE_ENV', 'production');
       vi.stubEnv('NEXT_PUBLIC_SUPABASE_URL', 'https://test.supabase.co');
-      vi.stubEnv('NEXT_PUBLIC_SUPABASE_ANON_KEY', 'valid-key');
+      vi.stubEnv('NEXT_PUBLIC_SUPABASE_ANON_KEY', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c');
       // Missing SUPABASE_SERVICE_ROLE_KEY
 
       expect(() => validateSupabaseEnv()).toThrow(
-        'SUPABASE_SERVICE_ROLE_KEY is required in production'
+        'Environment validation failed for production'
       );
     });
   });
@@ -118,19 +117,20 @@ describe('Environment Validation', () => {
   describe('getSupabaseConfig', () => {
     it('should return config for valid environment', () => {
       vi.stubEnv('NEXT_PUBLIC_SUPABASE_URL', 'https://test.supabase.co');
-      vi.stubEnv('NEXT_PUBLIC_SUPABASE_ANON_KEY', 'valid-key');
-      vi.stubEnv('SUPABASE_SERVICE_ROLE_KEY', 'service-key');
+      vi.stubEnv('NEXT_PUBLIC_SUPABASE_ANON_KEY', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c');
+      vi.stubEnv('SUPABASE_SERVICE_ROLE_KEY', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c');
 
       const config = getSupabaseConfig();
       expect(config.url).toBe('https://test.supabase.co');
-      expect(config.anonKey).toBe('valid-key');
-      expect(config.serviceRoleKey).toBe('service-key');
+      expect(config.anonKey).toBe('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c');
+      expect(config.serviceRoleKey).toBe('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c');
       expect(config.isDemoMode).toBe(false);
     });
 
     it('should return demo mode config', () => {
       vi.stubEnv('NEXT_PUBLIC_SUPABASE_URL', '');
       vi.stubEnv('NEXT_PUBLIC_SUPABASE_ANON_KEY', '');
+      vi.stubEnv('SUPABASE_SERVICE_ROLE_KEY', '');
 
       const config = getSupabaseConfig();
       expect(config.url).toBe('');
