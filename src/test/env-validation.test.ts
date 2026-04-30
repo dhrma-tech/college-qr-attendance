@@ -3,6 +3,10 @@ import { validateSupabaseEnv, getSupabaseConfig, validateClientSideSafety } from
 
 describe('Environment Validation', () => {
   const originalEnv = { ...process.env };
+  
+  // Realistic Supabase keys (JWT-like, minimum 100 chars)
+  const validAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRlc3QtcmVmLXZhbHVlIiwicm9sZSI6ImFub24iLCJpYXQiOjE2MjIwMDAwMDAsImV4cCI6MjUyNDYwODAwMH0.test-signature-value-for-valid-anon-key';
+  const validServiceKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRlc3QtcmVmLXZhbHVlIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTYyMjAwMDAwMCwiZXhwIjoyNTI0NjA4MDAwfQ.test-signature-value-for-service-role-key';
 
   beforeEach(() => {
     // Reset environment before each test
@@ -26,8 +30,8 @@ describe('Environment Validation', () => {
     it('should validate production environment with all required variables', () => {
       vi.stubEnv('NODE_ENV', 'production');
       vi.stubEnv('NEXT_PUBLIC_SUPABASE_URL', 'https://test.supabase.co');
-      vi.stubEnv('NEXT_PUBLIC_SUPABASE_ANON_KEY', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.test');
-      vi.stubEnv('SUPABASE_SERVICE_ROLE_KEY', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.service-role');
+      vi.stubEnv('NEXT_PUBLIC_SUPABASE_ANON_KEY', validAnonKey);
+      vi.stubEnv('SUPABASE_SERVICE_ROLE_KEY', validServiceKey);
 
       const result = validateSupabaseEnv();
       expect(result.isValid).toBe(true);
@@ -71,7 +75,7 @@ describe('Environment Validation', () => {
 
     it('should reject invalid URL format', () => {
       vi.stubEnv('NEXT_PUBLIC_SUPABASE_URL', 'invalid-url');
-      vi.stubEnv('NEXT_PUBLIC_SUPABASE_ANON_KEY', 'valid-key');
+      vi.stubEnv('NEXT_PUBLIC_SUPABASE_ANON_KEY', validAnonKey);
 
       const result = validateSupabaseEnv();
       expect(result.isValid).toBe(false);
@@ -93,7 +97,7 @@ describe('Environment Validation', () => {
 
     it('should detect public service role key exposure', () => {
       vi.stubEnv('NEXT_PUBLIC_SUPABASE_URL', 'https://test.supabase.co');
-      vi.stubEnv('NEXT_PUBLIC_SUPABASE_ANON_KEY', 'valid-key');
+      vi.stubEnv('NEXT_PUBLIC_SUPABASE_ANON_KEY', validAnonKey);
       vi.stubEnv('NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY', 'exposed-service-role');
 
       const result = validateSupabaseEnv();
@@ -106,7 +110,7 @@ describe('Environment Validation', () => {
     it('should require service role key in production', () => {
       vi.stubEnv('NODE_ENV', 'production');
       vi.stubEnv('NEXT_PUBLIC_SUPABASE_URL', 'https://test.supabase.co');
-      vi.stubEnv('NEXT_PUBLIC_SUPABASE_ANON_KEY', 'valid-key');
+      vi.stubEnv('NEXT_PUBLIC_SUPABASE_ANON_KEY', validAnonKey);
       // Missing SUPABASE_SERVICE_ROLE_KEY
 
       expect(() => validateSupabaseEnv()).toThrow(
@@ -118,13 +122,13 @@ describe('Environment Validation', () => {
   describe('getSupabaseConfig', () => {
     it('should return config for valid environment', () => {
       vi.stubEnv('NEXT_PUBLIC_SUPABASE_URL', 'https://test.supabase.co');
-      vi.stubEnv('NEXT_PUBLIC_SUPABASE_ANON_KEY', 'valid-key');
-      vi.stubEnv('SUPABASE_SERVICE_ROLE_KEY', 'service-key');
+      vi.stubEnv('NEXT_PUBLIC_SUPABASE_ANON_KEY', validAnonKey);
+      vi.stubEnv('SUPABASE_SERVICE_ROLE_KEY', validServiceKey);
 
       const config = getSupabaseConfig();
       expect(config.url).toBe('https://test.supabase.co');
-      expect(config.anonKey).toBe('valid-key');
-      expect(config.serviceRoleKey).toBe('service-key');
+      expect(config.anonKey).toBe(validAnonKey);
+      expect(config.serviceRoleKey).toBe(validServiceKey);
       expect(config.isDemoMode).toBe(false);
     });
 
@@ -141,7 +145,7 @@ describe('Environment Validation', () => {
 
     it('should throw error for invalid config in non-demo mode', () => {
       vi.stubEnv('NEXT_PUBLIC_SUPABASE_URL', 'invalid-url');
-      vi.stubEnv('NEXT_PUBLIC_SUPABASE_ANON_KEY', 'valid-key');
+      vi.stubEnv('NEXT_PUBLIC_SUPABASE_ANON_KEY', validAnonKey);
 
       expect(() => getSupabaseConfig()).toThrow(
         'Supabase configuration is invalid'
