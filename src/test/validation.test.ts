@@ -102,7 +102,7 @@ describe('Validation Helpers', () => {
 
     it('should reject invalid latitude values', () => {
       expect(() => validateLatitude(91)).toThrow('Value must be no more than 90');
-      expect(() => validateLatitude(-91)).toThrow('Value must be at least -90');
+      expect(() => validateLatitude(-91)).toThrow('Value must be no more than -90');
     });
   });
 

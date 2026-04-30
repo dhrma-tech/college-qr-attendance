@@ -128,6 +128,7 @@ describe('Environment Validation', () => {
     });
 
     it('should return demo mode config', () => {
+      vi.stubEnv('NODE_ENV', 'development');
       vi.stubEnv('NEXT_PUBLIC_SUPABASE_URL', '');
       vi.stubEnv('NEXT_PUBLIC_SUPABASE_ANON_KEY', '');
       vi.stubEnv('SUPABASE_SERVICE_ROLE_KEY', '');

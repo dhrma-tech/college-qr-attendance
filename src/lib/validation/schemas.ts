@@ -118,7 +118,7 @@ export function validateLatitude(value: unknown): number {
   }
   
   if (value < -90) {
-    throw new Error('Value must be at least -90');
+    throw new Error('Value must be no more than -90');
   }
   
   return value;
