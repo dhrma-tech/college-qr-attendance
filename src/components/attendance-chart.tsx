@@ -32,7 +32,7 @@ export function AttendanceCharts() {
               <XAxis dataKey="week" stroke="#64748b" />
               <YAxis stroke="#64748b" />
               <Tooltip />
-              <Area type="monotone" dataKey="attendance" stroke="#1A56DB" fill="#bfdbfe" />
+              <Area type="monotone" dataKey="attendance" stroke="#087F7A" fill="#CDEFE8" />
             </AreaChart>
           </ResponsiveContainer>
         </CardContent>
@@ -48,7 +48,7 @@ export function AttendanceCharts() {
               <XAxis dataKey="band" stroke="#64748b" />
               <YAxis stroke="#64748b" />
               <Tooltip />
-              <Bar dataKey="students" fill="#1A56DB" radius={[8, 8, 0, 0]} />
+              <Bar dataKey="students" fill="#087F7A" radius={[8, 8, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </CardContent>

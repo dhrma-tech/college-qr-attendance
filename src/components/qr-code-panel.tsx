@@ -12,8 +12,35 @@ const scannedStudents = [
   { name: "Rohan Das", roll: "CSE-542", time: "09:06 AM", flagged: true }
 ];
 
-export function QrCodePanel({ token }: { token: string }) {
+export function QrCodePanel({ token: sessionId }: { token: string }) {
+  const [token, setToken] = useState(sessionId);
   const [src, setSrc] = useState("");
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function rotateToken() {
+      try {
+        const response = await fetch(`/api/sessions/${encodeURIComponent(sessionId)}/rotate`, { method: "POST" });
+        const result = await response.json();
+        const payload = result.data || result;
+        const nextToken = payload.qrToken || payload.qr_token;
+
+        if (!cancelled && nextToken) {
+          setToken(String(nextToken));
+        }
+      } catch {
+        if (!cancelled) setToken(sessionId);
+      }
+    }
+
+    rotateToken();
+    const interval = window.setInterval(rotateToken, 30000);
+    return () => {
+      cancelled = true;
+      window.clearInterval(interval);
+    };
+  }, [sessionId]);
 
   useEffect(() => {
     setSrc("");
@@ -26,17 +53,17 @@ export function QrCodePanel({ token }: { token: string }) {
 
   return (
     <div className="min-h-screen bg-[#EAF8F4] text-ink">
-      <header className="flex items-center justify-between border-b border-ink/10 px-5 py-4">
-        <div>
+      <header className="flex flex-col gap-2 border-b border-ink/10 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-5">
+        <div className="min-w-0">
           <h1 className="text-lg font-black">Mathematics - Section A</h1>
           <p className="text-xs font-semibold text-ink/50">Prof. Mehta - Tue 28 Apr - Room 201</p>
         </div>
         <p className="font-mono text-sm font-black text-teal">00:18:42</p>
       </header>
 
-      <main className="grid min-h-[calc(100vh-148px)] place-items-center px-5 py-8">
+      <main className="grid min-h-[calc(100svh-148px)] place-items-center px-4 py-6 sm:px-5 sm:py-8">
         <div className="w-full max-w-4xl text-center">
-          <div className="mx-auto grid h-[min(78vw,420px)] min-h-[280px] w-[min(78vw,420px)] min-w-[280px] place-items-center rounded-2xl border-8 border-white bg-white p-5 shadow-qr">
+          <div className="mx-auto grid h-[min(82vw,420px)] min-h-[240px] w-[min(82vw,420px)] min-w-[240px] place-items-center rounded-2xl border-8 border-white bg-white p-4 shadow-qr sm:p-5">
             {src ? (
               <Image
                 src={src}
@@ -58,17 +85,17 @@ export function QrCodePanel({ token }: { token: string }) {
             ))}
           </div>
           <p className="mt-2 text-sm font-black text-ink/60">Refreshes in 18s</p>
-          <p className="mt-8 text-4xl font-black text-teal">38 / 48 students present</p>
+          <p className="mt-8 text-3xl font-black text-teal sm:text-4xl">38 / 48 students present</p>
         </div>
       </main>
 
-      <section className="border-t border-ink/10 bg-white px-5 py-4 text-ink">
+      <section className="border-t border-ink/10 bg-white px-4 py-4 text-ink sm:px-5">
         <div className="mx-auto flex max-w-5xl flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <Button variant="outline" className="border-ink/15">
             <ChevronUp className="h-4 w-4" />
             View Students
           </Button>
-          <div className="grid gap-2 md:min-w-[420px]">
+          <div className="grid w-full gap-2 md:min-w-[420px]">
             {scannedStudents.map((student) => (
               <div key={student.roll} className="flex items-center justify-between rounded-xl border border-ink/10 bg-paper px-3 py-2 text-sm">
                 <div>

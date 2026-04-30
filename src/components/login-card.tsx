@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { demoCredentials, validateDemoCredential } from "@/lib/demo-credentials";
+import { hasSupabasePublicEnv } from "@/lib/public-env";
+import { createClient } from "@/lib/supabase/client";
 import type { Role } from "@/lib/types";
 
 const labels: Record<Role, { title: string; detail: string; target: string; sideTitle: string; sideDetail: string }> = {
@@ -52,51 +54,106 @@ export function LoginCard({ role }: { role: Role }) {
   const copy = labels[role];
   const router = useRouter();
   const demo = demoCredentials[role];
-  const [showPassword, setShowPassword] = useState(false);
+  const supabaseConfigured = hasSupabasePublicEnv();
   const [email, setEmail] = useState(demo.email);
-  const [password, setPassword] = useState(demo.password);
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError("");
     setIsSubmitting(true);
 
-    if (!validateDemoCredential(role, email, password)) {
-      setIsSubmitting(false);
-      setError(`Use the ${copy.title.toLowerCase()} demo credentials shown below.`);
-      return;
-    }
+    try {
+      if (supabaseConfigured) {
+        if (!password) {
+          throw new Error("Enter your password.");
+        }
 
-    window.localStorage.setItem(
-      "college-qr-demo-session",
-      JSON.stringify({
-        role,
-        name: demo.name,
-        email: demo.email,
-        signedInAt: new Date().toISOString()
-      })
-    );
-    router.push(copy.target);
+        const supabase = createClient();
+        const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+          email: email.trim(),
+          password
+        });
+
+        if (authError || !authData.user) {
+          throw new Error("Incorrect email or password.");
+        }
+
+        const { data: profile, error: profileError } = await supabase
+          .from("users")
+          .select("id,name,email,role,is_active")
+          .eq("id", authData.user.id)
+          .single();
+
+        if (profileError || !profile) {
+          await supabase.auth.signOut();
+          throw new Error("Your account profile is missing. Contact your admin.");
+        }
+
+        if (!profile.is_active) {
+          await supabase.auth.signOut();
+          throw new Error("Your account has not been activated. Contact your admin.");
+        }
+
+        if (profile.role !== role) {
+          await supabase.auth.signOut();
+          throw new Error(`This account is not approved for the ${copy.title.toLowerCase()}.`);
+        }
+
+        window.localStorage.setItem(
+          "scanroll-session",
+          JSON.stringify({
+            mode: "connected",
+            role: profile.role,
+            name: profile.name,
+            email: profile.email,
+            signedInAt: new Date().toISOString()
+          })
+        );
+        router.push(getSafeRedirect(role, copy.target));
+        return;
+      }
+
+      if (!validateDemoCredential(role, email)) {
+        throw new Error(`Use the ${copy.title.toLowerCase()} demo email shown below.`);
+      }
+
+      window.localStorage.setItem(
+        "scanroll-session",
+        JSON.stringify({
+          mode: "demo",
+          role,
+          name: demo.name,
+          email: demo.email,
+          signedInAt: new Date().toISOString()
+        })
+      );
+      router.push(getSafeRedirect(role, copy.target));
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "Unable to sign in.");
+      setIsSubmitting(false);
+    }
   }
 
   return (
-    <main className="grid min-h-screen place-items-center bg-paper px-4 py-10">
+    <main className="grid min-h-screen place-items-center bg-paper px-3 py-5 sm:px-4 sm:py-10">
       <Card className="w-full max-w-5xl overflow-hidden border-ink/10 shadow-soft">
         <CardContent className="grid p-0 lg:grid-cols-[1fr_0.85fr]">
-          <section className="bg-[#EAF8F4] p-8 text-ink sm:p-10">
+          <section className="bg-[#EAF8F4] p-5 text-ink sm:p-8 lg:p-10">
             <BrandMark />
-            <div className="mt-16 max-w-md">
+            <div className="mt-10 max-w-md sm:mt-16">
               <p className="text-sm font-black uppercase tracking-wide text-teal">{copy.title}</p>
-              <h1 className="mt-4 text-4xl font-normal leading-tight text-ink sm:text-5xl">{copy.sideTitle}</h1>
+              <h1 className="mt-4 text-3xl font-normal leading-tight text-ink sm:text-5xl">{copy.sideTitle}</h1>
               <p className="mt-5 text-sm font-semibold leading-7 text-ink/60">{copy.sideDetail}</p>
             </div>
             <div className="mt-10 grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
               {[
                 { icon: QrCode, text: "Rotating QR sessions" },
                 { icon: MapPinned, text: "Location-aware scans" },
-                { icon: ShieldCheck, text: "Role-protected access" }
+                { icon: ShieldCheck, text: "Role-specific demo flows" }
               ].map((item) => (
                 <div key={item.text} className="flex items-center gap-3 rounded-xl border border-teal/15 bg-white/60 p-4 text-sm font-bold text-ink/70 shadow-sm">
                   <item.icon className="h-5 w-5 text-teal" />
@@ -106,7 +163,7 @@ export function LoginCard({ role }: { role: Role }) {
             </div>
           </section>
 
-          <section className="bg-white p-8 sm:p-10">
+          <section className="bg-white p-5 sm:p-8 lg:p-10">
             <div className="mb-8 lg:hidden">
               <BrandMark />
             </div>
@@ -137,17 +194,17 @@ export function LoginCard({ role }: { role: Role }) {
                 <span className="relative block">
                   <Lock className="pointer-events-none absolute left-3 top-3 h-5 w-5 text-ink/35" />
                   <Input
-                    className="border-ink/15 pl-10 pr-10"
-                    required
+                    className="border-ink/15 px-10"
+                    required={supabaseConfigured}
                     value={password}
                     onChange={(event) => setPassword(event.target.value)}
                     type={showPassword ? "text" : "password"}
                     autoComplete="current-password"
-                    placeholder="Enter password"
+                    placeholder={supabaseConfigured ? "Enter password" : "Not required in demo mode"}
                   />
                   <button
                     type="button"
-                    onClick={() => setShowPassword((value) => !value)}
+                    onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-3 text-ink/40"
                     aria-label={showPassword ? "Hide password" : "Show password"}
                   >
@@ -155,12 +212,6 @@ export function LoginCard({ role }: { role: Role }) {
                   </button>
                 </span>
               </label>
-              <div className="flex items-center justify-end text-xs">
-                <Link href="/forgot-password" className="font-black text-teal">
-                  Forgot password?
-                </Link>
-              </div>
-
               {error && (
                 <div className="rounded-xl border border-coral/20 bg-coral/10 px-4 py-3 text-sm font-bold text-coral" role="alert">
                   {error}
@@ -168,19 +219,17 @@ export function LoginCard({ role }: { role: Role }) {
               )}
 
               <div className="rounded-xl border border-teal/15 bg-teal/5 p-4">
-                <p className="text-xs font-black uppercase tracking-wide text-teal">Local demo credential</p>
+                <p className="text-xs font-black uppercase tracking-wide text-teal">Local demo access</p>
                 <div className="mt-3 grid gap-2 text-sm font-semibold text-ink/70">
                   <p>
                     Email: <span className="font-mono font-black text-ink">{demo.email}</span>
                   </p>
-                  <p>
-                    Password: <span className="font-mono font-black text-ink">{demo.password}</span>
-                  </p>
+                  <p>{supabaseConfigured ? "This deployment uses Supabase Auth and role checks." : "No password is used in demo mode. Configure Supabase to enable production login."}</p>
                 </div>
               </div>
 
               <Button type="submit" disabled={isSubmitting} className="w-full bg-teal hover:bg-teal/90">
-                {isSubmitting ? "Signing In..." : "Sign In"}
+                {isSubmitting ? "Signing in..." : supabaseConfigured ? "Sign In" : "Continue in Demo Mode"}
               </Button>
             </form>
             <p className="mt-6 text-center text-sm font-semibold text-ink/50">
@@ -207,4 +256,20 @@ export function LoginCard({ role }: { role: Role }) {
       </Card>
     </main>
   );
+}
+
+function getSafeRedirect(role: Role, fallback: string) {
+  if (typeof window === "undefined") return fallback;
+
+  const redirect = new URLSearchParams(window.location.search).get("redirect");
+  if (!redirect || !redirect.startsWith("/") || redirect.startsWith("//")) return fallback;
+
+  const allowedByRole: Record<Role, string[]> = {
+    student: ["/dashboard", "/scan"],
+    teacher: ["/teacher"],
+    hod: ["/hod"],
+    admin: ["/admin"]
+  };
+
+  return allowedByRole[role].some((prefix) => redirect.startsWith(prefix)) ? redirect : fallback;
 }

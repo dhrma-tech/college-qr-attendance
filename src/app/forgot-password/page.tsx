@@ -11,7 +11,7 @@ export default function Page() {
         <CardContent className="p-7">
           <BrandMark />
           <h1 className="mt-8 text-2xl font-bold text-slate-950">Reset password</h1>
-          <p className="mt-2 text-sm text-slate-500">Enter your college email to receive a secure reset link.</p>
+          <p className="mt-2 text-sm text-slate-500">Password reset is a placeholder in demo mode. Add real authentication before production.</p>
           <div className="mt-6 space-y-4">
             <Input placeholder="name@college.edu" type="email" />
             <Button className="w-full">Send reset link</Button>

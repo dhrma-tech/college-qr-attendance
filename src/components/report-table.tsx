@@ -4,7 +4,24 @@ import { Badge } from "@/components/ui/badge";
 export function ReportTable({ columns, rows }: { columns: TableColumn[]; rows: TableRow[] }) {
   return (
     <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-      <div className="overflow-x-auto">
+      <div className="grid divide-y divide-slate-100 md:hidden">
+        {rows.map((row, index) => (
+          <div key={index} className="grid gap-3 p-4">
+            {columns.map((column) => {
+              const value = String(row[column.key]);
+              return (
+                <div key={column.key} className="flex items-start justify-between gap-4">
+                  <span className="text-xs font-black uppercase tracking-wide text-slate-400">{column.label}</span>
+                  <span className="max-w-[62%] text-right text-sm font-semibold text-slate-700">
+                    {isBadgeValue(value) ? <Badge tone={badgeTone(value)}>{value}</Badge> : value}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        ))}
+      </div>
+      <div className="hidden overflow-x-auto md:block">
         <table className="w-full min-w-[640px] text-left text-sm">
           <thead className="sticky top-0 bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
             <tr>

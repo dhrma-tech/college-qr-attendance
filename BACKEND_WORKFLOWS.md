@@ -1,6 +1,6 @@
-# Backend Workflows
+# ScanRoll Backend Integration Notes
 
-This document maps the app routes, API routes, Supabase tables, and operational jobs.
+This document maps optional app routes, API routes, Supabase tables, and operational jobs for teams that want to move ScanRoll beyond demo mode.
 
 ## API Route Contract
 
@@ -12,10 +12,10 @@ This document maps the app routes, API routes, Supabase tables, and operational 
 | `POST` | `/api/attendance/mark` | Validate QR scan and create record | `mark_attendance_from_qr()` |
 | `POST` | `/api/attendance/override` | Teacher manual correction | `attendance_records.update` |
 | `GET` | `/api/reports/attendance` | Aggregated attendance report | `student_attendance_summary` |
-| `GET` | `/api/health/backend` | Deployment/API/database readiness map | env + workflow map |
+| `GET` | `/api/health/backend` | Deployment/API/database readiness map | env + integration map |
 | `POST` | `/api/signup` | Create pending account request | `signup_requests.insert` |
 
-All routes return safe demo responses when Supabase server environment variables are missing.
+All routes return demo responses when Supabase server environment variables are missing.
 
 ## Session Pipeline
 
@@ -44,7 +44,7 @@ All routes return safe demo responses when Supabase server environment variables
 - `supabase/migrations/0003_signup_approval_structure.sql`: signup requests, academic structure lists, attendance rules, approval views.
 - `supabase/seed.sql`: safe college seed placeholder.
 
-## Next Backend Improvements
+## Production Backend Improvements
 
 - Replace demo API responses with authenticated user context.
 - Expand RLS for HOD and admin scopes.

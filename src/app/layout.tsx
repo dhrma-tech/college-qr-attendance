@@ -20,8 +20,8 @@ const mono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: `${collegeConfig.name} QR Attendance`,
-  description: "Secure QR attendance for students, teachers, HODs, and college administrators."
+  title: "ScanRoll - QR Code Attendance System",
+  description: "Open-source QR-based attendance system for colleges with student, teacher, and admin roles."
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

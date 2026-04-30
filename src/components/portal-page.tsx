@@ -5,8 +5,10 @@ import { AdminStructureManager } from "@/components/admin-structure-manager";
 import { AttendanceCharts } from "@/components/attendance-chart";
 import { AttendanceBadge } from "@/components/attendance-badge";
 import { ApiSurfaceCard, BackendPipeline } from "@/components/backend-pipeline";
+import { DemoQrFlow } from "@/components/demo-qr-flow";
 import { DownloadButton } from "@/components/download-button";
 import { MetricCard } from "@/components/metric-card";
+import { QrScanner } from "@/components/qr-scanner";
 import { ReportTable } from "@/components/report-table";
 import { SessionCard } from "@/components/session-card";
 import { Badge } from "@/components/ui/badge";
@@ -44,7 +46,7 @@ export function PortalPage({ role, mode }: PortalPageProps) {
   return (
     <div className="space-y-6">
       <MetricGrid metrics={metrics} />
-      <div className="grid gap-6 xl:grid-cols-[1.25fr_0.75fr]">
+      <div className="grid gap-6 xl:grid-cols-[minmax(0,1.25fr)_minmax(0,0.75fr)]">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>{role === "student" ? "Today's Schedule" : "Recent Sessions"}</CardTitle>
@@ -88,10 +90,10 @@ function StudentDashboard() {
   return (
     <div className="space-y-6">
       <Card className="border-teal/15 bg-[#EAF8F4] text-ink">
-        <CardContent className="grid gap-6 p-6 lg:grid-cols-[1fr_0.7fr]">
+        <CardContent className="grid gap-6 p-5 sm:p-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.7fr)]">
           <div>
             <p className="text-sm font-black uppercase tracking-wide text-teal">Good morning, Aarav.</p>
-            <h2 className="mt-4 text-5xl font-normal text-ink">82%</h2>
+            <h2 className="mt-4 text-4xl font-normal text-ink sm:text-5xl">82%</h2>
             <p className="mt-3 text-sm font-semibold text-ink/60">overall this semester</p>
             <p className="mt-6 text-sm font-bold text-ink/70">6 subjects enrolled - 64 present - 14 absent</p>
           </div>
@@ -104,8 +106,9 @@ function StudentDashboard() {
         </CardContent>
       </Card>
       <AlertBanner subjects={atRisk} />
+      <DemoQrFlow />
       <MetricGrid metrics={dashboardMetrics.student} />
-      <div className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
         <AttendanceCharts />
         <Card>
           <CardHeader>
@@ -134,6 +137,7 @@ function StudentAttendancePage() {
           <DownloadButton label="Download certificate" />
         </CardContent>
       </Card>
+      <QrScanner />
       <SubjectBreakdown />
       <Card>
         <CardHeader>
@@ -181,7 +185,7 @@ function TeacherDashboard({ metrics }: { metrics: Metric[] }) {
         <SessionCard subject="Database Management" teacher="Dr. Priya Menon" present={51} total={58} />
         <SessionCard subject="Web Engineering" teacher="Ms. Sana Iqbal" present={46} total={52} />
       </div>
-      <div className="grid gap-6 xl:grid-cols-[1.25fr_0.75fr]">
+      <div className="grid gap-6 xl:grid-cols-[minmax(0,1.25fr)_minmax(0,0.75fr)]">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>Recent Sessions</CardTitle>
@@ -219,11 +223,11 @@ function HodDashboard({ metrics }: { metrics: Metric[] }) {
   return (
     <div className="space-y-6">
       <MetricGrid metrics={metrics} />
-      <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
+      <div className="grid gap-6 xl:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
         <Card className="border-teal/15 bg-[#EAF8F4] text-ink">
-          <CardContent className="p-6">
+          <CardContent className="p-5 sm:p-6">
             <p className="text-sm font-black uppercase tracking-wide text-teal">Department health</p>
-            <h2 className="mt-4 text-5xl font-normal text-ink">81%</h2>
+            <h2 className="mt-4 text-4xl font-normal text-ink sm:text-5xl">81%</h2>
             <p className="mt-2 text-sm font-semibold text-ink/60">Computer Science average this semester</p>
             <div className="mt-7 grid gap-3 sm:grid-cols-3">
               {["24 teachers", "5 live sessions", "37 at risk"].map((item) => (
@@ -253,7 +257,7 @@ function HodDashboard({ metrics }: { metrics: Metric[] }) {
           </CardContent>
         </Card>
       </div>
-      <div className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
+      <div className="grid gap-6 xl:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
         <ReportTable columns={tableColumns.teachers} rows={tableRows.teachers} />
         <AttendanceCharts />
       </div>
@@ -274,11 +278,11 @@ function AdminDashboard({ metrics }: { metrics: Metric[] }) {
   return (
     <div className="space-y-6">
       <MetricGrid metrics={metrics} />
-      <div className="grid gap-6 xl:grid-cols-[0.85fr_1.15fr]">
+      <div className="grid gap-6 xl:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)]">
         <Card className="border-teal/15 bg-[#EAF8F4] text-ink">
-          <CardContent className="p-6">
+          <CardContent className="p-5 sm:p-6">
             <p className="text-sm font-black uppercase tracking-wide text-teal">Setup progress</p>
-            <h2 className="mt-4 text-5xl font-normal text-ink">60%</h2>
+            <h2 className="mt-4 text-4xl font-normal text-ink sm:text-5xl">60%</h2>
             <p className="mt-2 text-sm font-semibold text-ink/60">Complete the remaining steps before first rollout.</p>
             <div className="mt-7 space-y-3">
               {setup.map((item) => (
@@ -292,7 +296,7 @@ function AdminDashboard({ metrics }: { metrics: Metric[] }) {
         </Card>
         <ApiSurfaceCard />
       </div>
-      <div className="grid gap-6 xl:grid-cols-[1fr_1fr]">
+      <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
         <BackendPipeline />
         <Card>
           <CardHeader>
@@ -356,10 +360,10 @@ function TeacherAttendance() {
   return (
     <div className="space-y-6">
       <Card className="overflow-hidden">
-        <CardContent className="grid gap-8 p-6 lg:grid-cols-[0.9fr_1.1fr]">
+        <CardContent className="grid gap-8 p-5 sm:p-6 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
           <div>
-            <Badge>Primary workflow</Badge>
-            <h2 className="mt-4 text-3xl font-bold text-slate-950">Start a QR attendance session</h2>
+            <Badge>Primary flow</Badge>
+            <h2 className="mt-4 text-2xl font-bold text-slate-950 sm:text-3xl">Start a ScanRoll QR session</h2>
             <p className="mt-3 text-slate-500">
               Select subject and section, confirm classroom location, then display a rotating QR code for students.
             </p>
@@ -385,7 +389,7 @@ function TeacherAttendance() {
               ))}
             </div>
           </div>
-          <div className="rounded-2xl bg-slate-950 p-6 text-white">
+          <div className="rounded-2xl bg-slate-950 p-4 text-white sm:p-6">
             <div className="flex items-center justify-between">
               <span className="font-semibold">Projector Preview</span>
               <Badge tone="success">Live</Badge>
@@ -405,6 +409,7 @@ function TeacherAttendance() {
         </CardContent>
       </Card>
       <BackendPipeline title="Teacher Session Pipeline" />
+      <DemoQrFlow />
       <ReportTable columns={tableColumns.sessions} rows={tableRows.sessions} />
     </div>
   );
@@ -472,7 +477,7 @@ function AlertsPanel() {
 function ProfilePanel({ role }: { role: string }) {
   return (
     <Card>
-      <CardContent className="grid gap-6 p-6 lg:grid-cols-[220px_1fr]">
+      <CardContent className="grid gap-6 p-5 sm:p-6 lg:grid-cols-[220px_1fr]">
         <div className="grid h-48 place-items-center rounded-xl bg-blue-50 text-primary">
           <CheckCircle2 className="h-14 w-14" />
         </div>
@@ -500,7 +505,7 @@ function BackupPanel() {
           <CardContent className="p-5">
             <Download className="h-6 w-6 text-primary" />
             <h2 className="mt-4 font-bold text-slate-950">{item}</h2>
-            <p className="mt-2 text-sm text-slate-500">Prepared for Supabase Storage export workflow.</p>
+            <p className="mt-2 text-sm text-slate-500">Prepared for future storage-backed exports.</p>
             <Button className="mt-5 w-full" variant="outline">
               Download
             </Button>

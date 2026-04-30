@@ -62,14 +62,14 @@ export default function LandingPage() {
       <LandingNav />
 
       <section className="bg-[#EAF8F4] text-ink">
-        <div className="mx-auto grid min-h-[calc(100vh-80px)] max-w-7xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[1fr_0.9fr] lg:px-8 lg:py-20">
+        <div className="mx-auto grid min-h-[calc(88svh-80px)] max-w-[110rem] gap-8 px-4 py-8 sm:px-6 sm:py-12 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:px-10 lg:py-14 2xl:px-12">
           <div className="flex flex-col justify-center">
-            <Badge className="w-fit bg-citron text-ink ring-citron">Open-source QR attendance</Badge>
-            <h1 className="mt-6 max-w-4xl text-5xl font-normal leading-[0.98] text-ink sm:text-7xl">
-              Attendance that actually works.
+            <Badge className="w-fit bg-citron text-ink ring-citron">ScanRoll - QR Code Attendance System</Badge>
+            <h1 className="mt-6 max-w-4xl text-4xl font-normal leading-[1.02] text-ink sm:text-6xl lg:text-7xl">
+              ScanRoll QR Code attendance for colleges.
             </h1>
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-ink/70">
-              Students scan a rotating QR from their seat. Teachers see who is present live. Reports, alerts, records - automatic.
+            <p className="mt-5 max-w-2xl text-base font-semibold leading-7 text-ink/70 sm:text-lg sm:leading-8">
+              ScanRoll lets teachers create QR-based sessions and students mark attendance instantly in a clean demo workflow for student, teacher, HOD, and admin roles.
             </p>
             <div className="mt-7 flex flex-wrap gap-3 text-sm font-bold text-ink/70">
               {["< 10 sec mark time", "30s QR rotation", "3-layer anti-proxy"].map((item) => (
@@ -152,10 +152,10 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section id="how" className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+      <section id="how" className="mx-auto max-w-[110rem] px-4 py-12 sm:px-6 sm:py-16 lg:px-10 2xl:px-12">
         <div className="max-w-2xl">
           <p className="text-sm font-black uppercase tracking-wide text-teal">How it works</p>
-          <h2 className="mt-3 text-4xl font-normal text-ink sm:text-5xl">Three portals. One clean attendance flow.</h2>
+          <h2 className="mt-3 text-3xl font-normal text-ink sm:text-5xl">Three portals. One clean attendance flow.</h2>
         </div>
         <div className="mt-10 grid gap-4 lg:grid-cols-3">
           {[
@@ -184,15 +184,15 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section id="features" className="bg-white py-16">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <section id="features" className="bg-white py-12 sm:py-16">
+        <div className="mx-auto max-w-[110rem] px-4 sm:px-6 lg:px-10 2xl:px-12">
           <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
             <div>
               <p className="text-sm font-black uppercase tracking-wide text-teal">Features</p>
-              <h2 className="mt-3 text-4xl font-normal text-ink sm:text-5xl">Built to stop proxy attendance.</h2>
+              <h2 className="mt-3 text-3xl font-normal text-ink sm:text-5xl">Built to stop proxy attendance.</h2>
             </div>
             <p className="max-w-md text-sm font-semibold leading-6 text-ink/55">
-              The product keeps the daily teacher workflow fast while giving the college stronger records and cleaner reporting.
+              ScanRoll keeps the daily teacher flow fast while giving colleges clearer records and cleaner attendance reporting.
             </p>
           </div>
           <div className="mt-10 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
@@ -209,11 +209,11 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section id="portals" className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+      <section id="portals" className="mx-auto max-w-[110rem] px-4 py-12 sm:px-6 sm:py-16 lg:px-10 2xl:px-12">
         <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
           <div>
             <p className="text-sm font-black uppercase tracking-wide text-teal">Portal previews</p>
-            <h2 className="mt-3 text-4xl font-normal text-ink sm:text-5xl">Every role gets the right screen.</h2>
+            <h2 className="mt-3 text-3xl font-normal text-ink sm:text-5xl">Every role gets the right screen.</h2>
           </div>
           <p className="max-w-md text-sm font-semibold leading-6 text-ink/55">
             Students need fast clarity. Teachers need live control. HOD and admin teams need calm oversight.
@@ -247,10 +247,10 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section className="bg-white py-16">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <section className="bg-white py-12 sm:py-16">
+        <div className="mx-auto max-w-[110rem] px-4 sm:px-6 lg:px-10 2xl:px-12">
           <p className="text-sm font-black uppercase tracking-wide text-teal">College setup</p>
-          <h2 className="mt-3 max-w-3xl text-4xl font-normal text-ink sm:text-5xl">From empty project to first attendance session.</h2>
+          <h2 className="mt-3 max-w-3xl text-3xl font-normal text-ink sm:text-5xl">From empty project to first attendance session.</h2>
           <div className="mt-10 grid gap-3 md:grid-cols-5">
             {["College config", "Departments", "Teachers", "Students", "Start session"].map((step, index) => (
               <div key={step} className="rounded-xl border border-ink/10 bg-paper p-5">
@@ -263,11 +263,11 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section id="staff" className="mx-auto grid max-w-7xl gap-4 px-4 py-16 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:px-8">
+      <section id="staff" className="mx-auto grid max-w-[110rem] gap-4 px-4 py-12 sm:px-6 sm:py-16 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:px-10 2xl:px-12">
         <Card className="border-teal/15 bg-[#EAF8F4] text-ink">
-          <CardContent className="p-8">
+          <CardContent className="p-5 sm:p-8">
             <p className="text-sm font-black uppercase tracking-wide text-teal">Teacher portal</p>
-            <h2 className="mt-4 text-4xl font-normal text-ink">Built for how teachers actually teach.</h2>
+            <h2 className="mt-4 text-3xl font-normal text-ink sm:text-4xl">Built for how teachers actually teach.</h2>
             <ul className="mt-8 space-y-4 text-sm font-bold text-ink/70">
               <li>Start a session in 2 taps</li>
               <li>QR displays full-screen for projectors</li>
@@ -279,9 +279,9 @@ export default function LandingPage() {
           </CardContent>
         </Card>
         <Card className="border-ink/10 bg-paper">
-          <CardContent className="p-8">
+          <CardContent className="p-5 sm:p-8">
             <p className="text-sm font-black uppercase tracking-wide text-teal">HOD portal</p>
-            <h2 className="mt-4 text-4xl font-normal text-ink">Department oversight, not chaos.</h2>
+            <h2 className="mt-4 text-3xl font-normal text-ink sm:text-4xl">Department oversight, not chaos.</h2>
             <ul className="mt-8 space-y-4 text-sm font-bold text-ink/60">
               <li>All teacher sessions in one view</li>
               <li>Auto-alerts below threshold</li>
@@ -294,9 +294,9 @@ export default function LandingPage() {
         </Card>
       </section>
 
-      <section className="bg-mist py-16">
-        <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
-          <h2 className="text-4xl font-normal text-ink sm:text-5xl">Free for any college. Open to improve.</h2>
+      <section className="bg-mist py-12 sm:py-16">
+        <div className="mx-auto max-w-[110rem] px-4 text-center sm:px-6 lg:px-10 2xl:px-12">
+          <h2 className="text-3xl font-normal text-ink sm:text-5xl">Free for any college. Open to improve.</h2>
           <p className="mx-auto mt-4 max-w-2xl text-base font-semibold leading-7 text-ink/60">
             MIT licensed. Vercel and Supabase free tiers are enough to start a practical single-college rollout.
           </p>
@@ -313,7 +313,7 @@ export default function LandingPage() {
             ))}
           </div>
           <Button asChild className="mt-8 border border-teal/15 bg-[#EAF8F4] text-ink hover:bg-[#dff4ef]">
-            <Link href="https://github.com/dhrma-tech/college-qr-attendance">
+              <Link href="https://github.com/dhrma-tech/college-qr-attendance">
               View on GitHub
               <Github className="h-4 w-4" />
             </Link>
@@ -321,8 +321,8 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section className="bg-[#EAF8F4] px-4 py-16 text-center text-ink sm:px-6 lg:px-8">
-        <h2 className="text-4xl font-normal sm:text-5xl">Ready to end proxy attendance?</h2>
+      <section className="bg-[#EAF8F4] px-4 py-12 text-center text-ink sm:px-6 sm:py-16 lg:px-10 2xl:px-12">
+        <h2 className="text-3xl font-normal sm:text-5xl">Ready to end proxy attendance?</h2>
         <p className="mt-4 text-ink/60">Set up in minutes. Free for any college.</p>
         <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
           <Button asChild className="bg-citron text-ink hover:bg-citron/90">
@@ -334,12 +334,12 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <footer className="bg-[#EAF8F4] px-4 pb-10 text-ink/60 sm:px-6 lg:px-8">
-        <div className="mx-auto grid max-w-7xl gap-8 border-t border-ink/10 pt-10 md:grid-cols-[1fr_1fr]">
+      <footer className="bg-[#EAF8F4] px-4 pb-10 text-ink/60 sm:px-6 lg:px-10 2xl:px-12">
+        <div className="mx-auto grid max-w-[110rem] gap-8 border-t border-ink/10 pt-10 md:grid-cols-[1fr_1fr]">
           <div>
             <BrandMark />
-            <p className="mt-4 max-w-md text-sm">Smart QR attendance for one college, with clean portals for students, teachers, HODs, and admins.</p>
-            <p className="mt-5 text-xs">MIT License. Copyright 2026 {collegeConfig.name}.</p>
+            <p className="mt-4 max-w-md text-sm">ScanRoll is an open-source QR Code Attendance System for colleges, with clean portals for students, teachers, HODs, and admins.</p>
+            <p className="mt-5 text-xs">MIT License. Copyright 2026 ScanRoll contributors.</p>
           </div>
           <div className="grid gap-6 text-sm font-bold sm:grid-cols-2">
             <div className="space-y-3">

@@ -1,5 +1,6 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { demoResponse, hasSupabaseServerEnv } from "@/lib/backend/env";
+import type { Role } from "@/lib/types";
 
 export type MarkAttendanceInput = {
   token: string;
@@ -22,6 +23,11 @@ export type OverrideInput = {
   status?: "present" | "absent" | "late" | "excused";
   reason?: string;
   actorId?: string;
+};
+
+export type AttendanceReportInput = {
+  actorId: string;
+  role: Role;
 };
 
 export async function markAttendance(input: MarkAttendanceInput) {
@@ -139,7 +145,7 @@ export async function overrideAttendance(input: OverrideInput) {
   return { mode: "connected" as const, data };
 }
 
-export async function getAttendanceReport() {
+export async function getAttendanceReport(input?: AttendanceReportInput) {
   if (!hasSupabaseServerEnv()) {
     return demoResponse({
       generatedAt: new Date().toISOString(),
@@ -151,7 +157,20 @@ export async function getAttendanceReport() {
   }
 
   const supabase = createAdminClient();
-  const { data, error } = await supabase.from("student_attendance_summary").select("*").limit(200);
+
+  if (input?.role === "teacher") {
+    const { data, error } = await supabase.from("teacher_attendance_summary").select("*").eq("teacher_id", input.actorId).limit(200);
+    if (error) throw new Error(error.message);
+    return { mode: "connected" as const, data };
+  }
+
+  let query = supabase.from("student_attendance_summary").select("*").limit(200);
+
+  if (input?.role === "student") {
+    query = query.eq("student_id", input.actorId);
+  }
+
+  const { data, error } = await query;
 
   if (error) throw new Error(error.message);
   return { mode: "connected" as const, data };

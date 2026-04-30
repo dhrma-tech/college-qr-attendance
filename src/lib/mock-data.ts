@@ -64,6 +64,30 @@ export const landingStats = [
   { label: "Average attendance", value: "82%" }
 ];
 
+export const demoStudents = [
+  { id: "stu-001", name: "Aarav Sharma", rollNumber: "CSE-501", department: "Computer Science" },
+  { id: "stu-002", name: "Meera Nair", rollNumber: "CSE-518", department: "Computer Science" },
+  { id: "stu-003", name: "Kabir Khan", rollNumber: "CSE-542", department: "Computer Science" }
+];
+
+export const demoTeachers = [
+  { id: "tch-001", name: "Dr. Priya Menon", subject: "Database Management Systems" },
+  { id: "tch-002", name: "Prof. Arjun Rao", subject: "Computer Networks" },
+  { id: "tch-003", name: "Ms. Sana Iqbal", subject: "Web Engineering" }
+];
+
+export const demoSessions = [
+  { id: "qr-dbms-001", subject: "Database Management Systems", date: "2026-04-28", time: "09:00", qrCodeId: "SCANROLL-DBMS-001" },
+  { id: "qr-web-001", subject: "Web Engineering", date: "2026-04-28", time: "11:00", qrCodeId: "SCANROLL-WEB-001" },
+  { id: "qr-net-001", subject: "Computer Networks", date: "2026-04-28", time: "14:00", qrCodeId: "SCANROLL-NET-001" }
+];
+
+export const demoAttendanceLogs = [
+  { studentId: "stu-001", sessionId: "qr-dbms-001", timestamp: "2026-04-28T09:03:00+05:30", status: "present" },
+  { studentId: "stu-002", sessionId: "qr-dbms-001", timestamp: "2026-04-28T09:04:00+05:30", status: "present" },
+  { studentId: "stu-003", sessionId: "qr-web-001", timestamp: "2026-04-28T11:12:00+05:30", status: "late" }
+];
+
 export const dashboardMetrics: Record<string, Metric[]> = {
   student: [
     { label: "Overall attendance", value: "82%", detail: "7% above college threshold", tone: "success" },

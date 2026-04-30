@@ -24,10 +24,10 @@ export function AdminStructureManager() {
   return (
     <div className="space-y-6">
       <Card className="border-teal/15 bg-[#EAF8F4] text-ink">
-        <CardContent className="grid gap-4 p-6 lg:grid-cols-[1fr_1fr]">
+        <CardContent className="grid gap-4 p-5 sm:p-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
           <div>
             <p className="text-sm font-black uppercase tracking-wide text-teal">Account approval data</p>
-            <h2 className="mt-3 text-4xl font-normal text-ink">Configure the college structure before approving users.</h2>
+            <h2 className="mt-3 text-3xl font-normal text-ink sm:text-4xl">Configure the college structure before approving users.</h2>
             <p className="mt-3 text-sm font-semibold leading-6 text-ink/60">
               Signup requests should be mapped to departments, branches, classes, subjects, timetable slots, and attendance rules before activation.
             </p>
@@ -66,7 +66,7 @@ export function AdminStructureManager() {
         </div>
       </section>
 
-      <div className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
+      <div className="grid gap-6 xl:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
         <Card className="border-ink/10">
           <CardHeader>
             <CardTitle>Mappings</CardTitle>

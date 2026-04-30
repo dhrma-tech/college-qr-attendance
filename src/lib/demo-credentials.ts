@@ -4,7 +4,6 @@ export type DemoCredential = {
   role: Role;
   name: string;
   email: string;
-  password: string;
   target: string;
 };
 
@@ -12,34 +11,30 @@ export const demoCredentials: Record<Role, DemoCredential> = {
   student: {
     role: "student",
     name: "Aarav Patil",
-    email: "student@college.edu",
-    password: "Student@123",
+    email: "student@scanroll.demo",
     target: "/dashboard"
   },
   teacher: {
     role: "teacher",
     name: "Prof. Meera Sharma",
-    email: "teacher@college.edu",
-    password: "Teacher@123",
+    email: "teacher@scanroll.demo",
     target: "/teacher/dashboard"
   },
   hod: {
     role: "hod",
     name: "Dr. Rohan Deshmukh",
-    email: "hod@college.edu",
-    password: "Hod@123",
+    email: "hod@scanroll.demo",
     target: "/hod/dashboard"
   },
   admin: {
     role: "admin",
-    name: "College Admin",
-    email: "admin@college.edu",
-    password: "Admin@123",
+    name: "ScanRoll Admin",
+    email: "admin@scanroll.demo",
     target: "/admin/dashboard"
   }
 };
 
-export function validateDemoCredential(role: Role, email: string, password: string) {
+export function validateDemoCredential(role: Role, email: string) {
   const credential = demoCredentials[role];
-  return credential.email.toLowerCase() === email.trim().toLowerCase() && credential.password === password;
+  return credential.email.toLowerCase() === email.trim().toLowerCase();
 }

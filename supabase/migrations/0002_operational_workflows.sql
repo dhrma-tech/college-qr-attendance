@@ -70,7 +70,12 @@ declare
   computed_distance numeric;
   should_flag boolean := false;
   record_id uuid;
+  existing_record uuid;
 begin
+  if student_uuid is null then
+    return jsonb_build_object('status', 'login', 'message', 'Student account is required');
+  end if;
+
   select *
   into target_session
   from attendance_sessions
@@ -85,6 +90,22 @@ begin
 
   computed_distance := distance_meters(target_session.latitude, target_session.longitude, scan_latitude, scan_longitude);
   should_flag := computed_distance is not null and computed_distance > target_session.radius_meters;
+
+  select id
+  into existing_record
+  from attendance_records
+  where session_id = target_session.id
+    and student_id = student_uuid
+  limit 1;
+
+  if existing_record is not null then
+    return jsonb_build_object(
+      'status', 'already',
+      'session_id', target_session.id,
+      'record_id', existing_record,
+      'message', 'Attendance already marked'
+    );
+  end if;
 
   insert into attendance_records (
     session_id,
@@ -104,8 +125,6 @@ begin
     scan_device_fingerprint,
     should_flag
   )
-  on conflict (session_id, student_id)
-  do update set marked_at = attendance_records.marked_at
   returning id into record_id;
 
   return jsonb_build_object(
@@ -141,6 +160,33 @@ left join attendance_sessions ass on ass.subject_assignment_id = sa.id
 left join attendance_records ar on ar.session_id = ass.id and ar.student_id = u.id
 where u.role = 'student'
 group by u.id, u.name, u.roll_number, s.id, s.name;
+
+create or replace view teacher_attendance_summary as
+select
+  sa.teacher_id,
+  teacher.name as teacher_name,
+  u.id as student_id,
+  u.name as student_name,
+  u.roll_number,
+  s.id as subject_id,
+  s.name as subject_name,
+  sa.section,
+  count(ar.id) filter (where ar.status = 'present') as present_count,
+  count(ar.id) filter (where ar.status = 'late') as late_count,
+  count(ar.id) filter (where ar.status = 'absent') as absent_count,
+  count(ar.id) as total_records,
+  case
+    when count(ar.id) = 0 then 0
+    else round((count(ar.id) filter (where ar.status in ('present', 'late'))::numeric / count(ar.id)::numeric) * 100, 2)
+  end as attendance_percentage
+from subject_assignments sa
+join users teacher on teacher.id = sa.teacher_id
+join subjects s on s.id = sa.subject_id
+join student_enrollments se on se.subject_id = s.id and se.section = sa.section
+join users u on u.id = se.student_id
+left join attendance_sessions ass on ass.subject_assignment_id = sa.id
+left join attendance_records ar on ar.session_id = ass.id and ar.student_id = u.id
+group by sa.teacher_id, teacher.name, u.id, u.name, u.roll_number, s.id, s.name, sa.section;
 
 create or replace view active_session_status as
 select

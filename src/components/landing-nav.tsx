@@ -37,8 +37,10 @@ export function LandingNav() {
         hidden ? "-translate-y-full" : "translate-y-0"
       )}
     >
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-        <BrandMark />
+      <div className="mx-auto flex max-w-[110rem] items-center justify-between gap-3 px-4 py-3 sm:px-6 sm:py-4 lg:px-10 2xl:px-12">
+        <div className="min-w-0">
+          <BrandMark />
+        </div>
         <nav className="hidden items-center gap-8 text-sm font-bold text-ink/70 md:flex">
           {navItems.map((item) => (
             <a key={item.href} href={item.href} className="transition hover:text-teal">
@@ -56,7 +58,7 @@ export function LandingNav() {
         </div>
         <button
           type="button"
-          className="grid h-11 w-11 place-items-center rounded-lg border border-ink/10 bg-white text-ink md:hidden"
+          className="grid h-11 w-11 shrink-0 place-items-center rounded-lg border border-ink/10 bg-white text-ink md:hidden"
           onClick={() => setOpen(true)}
           aria-label="Open navigation"
         >
@@ -66,7 +68,7 @@ export function LandingNav() {
 
       {open && (
         <div className="fixed inset-0 z-50 bg-[#EAF8F4]/85 backdrop-blur-sm md:hidden">
-          <div className="ml-auto flex h-full w-[min(88vw,380px)] flex-col bg-paper p-5 shadow-soft">
+          <div className="ml-auto flex h-full w-[min(92vw,380px)] flex-col bg-paper p-4 shadow-soft sm:p-5">
             <div className="flex items-center justify-between">
               <BrandMark />
               <button
@@ -84,7 +86,7 @@ export function LandingNav() {
                   key={item.href}
                   href={item.href}
                   onClick={() => setOpen(false)}
-                  className="block rounded-xl bg-white px-4 py-4 text-sm font-black text-ink"
+                  className="block rounded-xl bg-white px-4 py-4 text-base font-black text-ink"
                 >
                   {item.label}
                 </a>

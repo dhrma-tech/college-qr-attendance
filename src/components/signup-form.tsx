@@ -14,7 +14,7 @@ type SignupRole = Extract<Role, "student" | "teacher" | "hod">;
 const roleCopy: Record<SignupRole, { title: string; subtitle: string; loginHref: string }> = {
   student: {
     title: "Student Sign Up",
-    subtitle: "Create your student account for QR attendance, subject records, and reports.",
+    subtitle: "Create your student account for ScanRoll attendance records and reports.",
     loginHref: "/login"
   },
   teacher: {
@@ -104,7 +104,7 @@ export function SignupForm({ role }: { role: SignupRole }) {
   }
 
   return (
-    <main className="min-h-screen bg-paper px-4 py-8">
+    <main className="min-h-screen bg-paper px-3 py-5 sm:px-4 sm:py-8">
       <div className="mx-auto max-w-6xl">
         <div className="mb-6 flex items-center justify-between gap-4">
           <BrandMark />
@@ -114,12 +114,12 @@ export function SignupForm({ role }: { role: SignupRole }) {
         </div>
 
         <Card className="overflow-hidden border-ink/10 shadow-soft">
-          <CardContent className="grid p-0 lg:grid-cols-[0.78fr_1.22fr]">
-            <aside className="bg-[#EAF8F4] p-8 text-ink sm:p-10">
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-teal text-white">
+          <CardContent className="grid p-0 lg:grid-cols-[minmax(0,0.78fr)_minmax(0,1.22fr)]">
+            <aside className="bg-[#EAF8F4] p-5 text-ink sm:p-8 lg:p-10">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-teal text-white sm:h-14 sm:w-14">
                 <UserPlus className="h-7 w-7" />
               </div>
-              <h1 className="mt-8 text-5xl font-normal leading-tight text-ink">{copy.title}</h1>
+              <h1 className="mt-6 text-4xl font-normal leading-tight text-ink sm:mt-8 sm:text-5xl">{copy.title}</h1>
               <p className="mt-5 text-sm font-semibold leading-7 text-ink/60">{copy.subtitle}</p>
               <div className="mt-8 rounded-2xl border border-teal/15 bg-white/65 p-5">
                 <div className="flex gap-3">
@@ -134,7 +134,7 @@ export function SignupForm({ role }: { role: SignupRole }) {
               </div>
             </aside>
 
-            <section className="bg-white p-6 sm:p-8">
+            <section className="bg-white p-5 sm:p-8">
               <form onSubmit={handleSubmit} className="grid gap-6">
                 <FieldSection title="Required details">
                   {role === "student" && <StudentRequiredFields />}
@@ -196,7 +196,7 @@ function FieldSection({ title, children }: { title: string; children: React.Reac
   return (
     <section>
       <h2 className="text-xl font-black text-ink">{title}</h2>
-      <div className="mt-4 grid gap-4 md:grid-cols-2">{children}</div>
+      <div className="mt-4 grid gap-4 sm:grid-cols-2">{children}</div>
     </section>
   );
 }

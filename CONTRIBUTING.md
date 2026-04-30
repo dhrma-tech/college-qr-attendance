@@ -1,18 +1,24 @@
-# Contributing
+# Contributing to ScanRoll
 
-Thanks for improving College QR Attendance.
+Thanks for improving ScanRoll.
 
-## Local Workflow
+## Local Development
 
-1. Create a feature branch.
-2. Run `npm install`.
-3. Run `npm run lint` and `npm run build` before opening a pull request.
-4. Keep changes focused and document schema changes in `supabase/migrations`.
+1. Fork the repository.
+2. Create a feature branch.
+3. Run `npm install`.
+4. Run `npm run lint`, `npm run typecheck`, and `npm run build`.
+5. Open a pull request with a clear summary.
 
-## Design Rules
+## Guidelines
 
-- Keep role trees separate.
-- Keep student scan flows mobile-first.
-- Keep teacher QR pages projector-friendly.
-- Pair color-coded status with text labels.
-- Do not add college-specific secrets or real student data to the repository.
+- Keep the product identity focused on ScanRoll as a QR Code Attendance System for colleges.
+- Do not add real student, teacher, or college data.
+- Do not commit secrets, tokens, API keys, or passwords.
+- Keep demo-mode behavior clearly labeled.
+- Keep mobile and laptop layouts usable.
+- Prefer small, focused pull requests.
+
+## Reporting Issues
+
+Use the GitHub issue templates for bug reports and feature requests.
