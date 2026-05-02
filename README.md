@@ -1,17 +1,5 @@
 # ScanRoll
 
-> **⚠️ PRODUCTION WARNING: MVP/STARTER-KIT STATUS**
-> 
-> ScanRoll is currently an MVP/starter-kit and **must not be used with real student data** until you have completed the security hardening steps in [SECURITY.md](./SECURITY.md) and [PRODUCTION_CHECKLIST.md](./PRODUCTION_CHECKLIST.md).
-> 
-> This is a demonstration project for development and testing purposes only. Using it with real student data without proper security configuration poses serious privacy and security risks.
-> 
-> **Required reading before any production use:**
-> - [SECURITY.md](./SECURITY.md) - Security model and requirements
-> - [SETUP.md](./SETUP.md) - Complete setup guide
-> - [PRODUCTION_CHECKLIST.md](./PRODUCTION_CHECKLIST.md) - Production deployment checklist
-> - [RELEASE_CHECKLIST.md](./RELEASE_CHECKLIST.md) - Release preparation checklist
-
 ScanRoll is an open-source QR Code Attendance System for colleges. Teachers can create QR-based attendance sessions, students can scan the QR from their phone, and admins/HODs can review attendance dashboards and reports.
 
 The project is designed to be easy to try first, then connect to a real backend later.
@@ -322,6 +310,19 @@ Read [SECURITY.md](./SECURITY.md) before production use.
 ## Contributing
 
 Contributions are welcome. Please read [CONTRIBUTING.md](./CONTRIBUTING.md).
+
+> **⚠️ PRODUCTION WARNING: MVP/STARTER-KIT STATUS**
+> 
+> ScanRoll is currently an MVP/starter-kit and **must not be used with real student data** until you have completed the security hardening steps in [SECURITY.md](./SECURITY.md) and [PRODUCTION_CHECKLIST.md](./PRODUCTION_CHECKLIST.md).
+> 
+> This is a demonstration project for development and testing purposes only. Using it with real student data without proper security configuration poses serious privacy and security risks.
+> 
+> **Required reading before any production use:**
+> - [SECURITY.md](./SECURITY.md) - Security model and requirements
+> - [SETUP.md](./SETUP.md) - Complete setup guide
+> - [PRODUCTION_CHECKLIST.md](./PRODUCTION_CHECKLIST.md) - Production deployment checklist
+> - [RELEASE_CHECKLIST.md](./RELEASE_CHECKLIST.md) - Release preparation checklist
+
 
 ## License
 
